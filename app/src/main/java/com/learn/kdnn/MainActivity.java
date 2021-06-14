@@ -67,12 +67,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             PopupMenu popupMenu = new PopupMenu(this, binding.appBarMain.accountCircle);
             popupMenu.inflate(R.menu.account_setting);
             popupMenu.show();
+            boolean isLogged = FirebaseAuth.getInstance().getCurrentUser() == null;
+            if (isLogged) {
+                MenuItem logout =   popupMenu.getMenu().getItem(2);
+                logout.setTitle("Login");
+            }
             popupMenu.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.item_logout) {
-                    FirebaseAuth.getInstance().signOut();
-                    Intent i = new Intent(this,LoginActivity.class);
-                    startActivity(i);
-                    this.finish();
+                        FirebaseAuth.getInstance().signOut();
+                        Intent i = new Intent(this, LoginActivity.class);
+                        startActivity(i);
+                        this.finish();
                 }
                 return false;
             });
