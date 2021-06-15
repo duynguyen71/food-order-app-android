@@ -38,10 +38,10 @@
             app:destination="@id/nav_bag" />
     </fragment>
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.learn.kdnn.ui.slideshow.SlideshowFragment"
+        android:id="@+id/nav_favorites"
+        android:name="com.learn.kdnn.ui.favorites.FavoritesFragment"
         android:label="fragment_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_favorites" />
     <fragment
         android:id="@+id/nav_bag"
         android:name="com.learn.kdnn.ui.bag.BagFragment"

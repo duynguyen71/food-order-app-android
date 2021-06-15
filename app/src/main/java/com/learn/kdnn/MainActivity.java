@@ -1,7 +1,11 @@
 package com.learn.kdnn;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,13 +31,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new ViewModelProvider(this).get(MainViewModel.class);
+        if (!isInternetConected()) {
+            this.showConnectInternetDialog();
+        }
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        updateBagCounter(viewModel.getBag().getValue().size());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -44,14 +52,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
 //                ,R.id.nav_product_details
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_favorites)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-//        navi
-//        ngationView.setNavigationItemSelectedListener(this);
         NavigationUI.setupWithNavController(navigationView, navController);
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
@@ -69,24 +75,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             popupMenu.show();
             boolean isLogged = FirebaseAuth.getInstance().getCurrentUser() == null;
             if (isLogged) {
-                MenuItem logout =   popupMenu.getMenu().getItem(2);
+                MenuItem logout = popupMenu.getMenu().getItem(2);
                 logout.setTitle("Login");
             }
             popupMenu.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.item_logout) {
-                        FirebaseAuth.getInstance().signOut();
-                        Intent i = new Intent(this, LoginActivity.class);
-                        startActivity(i);
-                        this.finish();
+                    FirebaseAuth.getInstance().signOut();
+                    Intent i = new Intent(this, LoginActivity.class);
+                    startActivity(i);
+                    this.finish();
                 }
                 return false;
             });
         });
+
+    }
+
+
+    private boolean isInternetConected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if ((wifi != null && wifi.isConnected()) || (mobile != null && mobile.isConnected())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void showConnectInternetDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage("Please connect to network first")
+                .setCancelable(false)
+                .setPositiveButton("Connect", ((dialog, which) -> {
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                }))
+                .setNegativeButton("Cancel", ((dialog, which) -> {
+                    dialog.dismiss();
+                }))
+                .show();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -110,5 +142,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
     }
 
+    public void updateBagCounter(int i) {
+        binding.appBarMain.countBagItem.setText(String.valueOf(i));
+    }
 
 }

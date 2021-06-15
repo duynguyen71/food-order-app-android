@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:src="@drawable/ic_baseline_account_circle_24"
+            android:src="@drawable/ic_account_circle_24"
             app:tint="@color/black" />
     </LinearLayout>
 
@@ -85,7 +85,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dividerrr"
         tools:itemCount="10"
-        tools:listitem="@layout/bag_item_entry" />
+        tools:listitem="@layout/shopping_bag_item_entry" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -133,7 +133,7 @@
             android:textAlignment="viewStart"
             app:backgroundTint="@color/black"
             app:cornerRadius="0dp"
-            app:icon="@drawable/ic_baseline_arrow_right_alt_24"
+            app:icon="@drawable/ic_arrow_right_alt_24"
             app:iconGravity="end" />
     </LinearLayout>
 

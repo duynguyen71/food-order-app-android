@@ -67,12 +67,26 @@
                     android:text="TextView"
                     android:textColor="@color/black" />
 
-                <TextView
-                    android:id="@+id/added_quality"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quality: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/addedQuality"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TextView" />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
 
@@ -86,14 +100,29 @@
         android:background="@android:color/darker_gray" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_continute_buy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Continute Buy"
+        android:textAlignment="viewStart"
+        app:backgroundTint="@color/black"
+        app:cornerRadius="0dp"
+        app:icon="@drawable/ic_arrow_right_alt_24"
+        app:iconGravity="end" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_view_bag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:text="View bag"
         android:textAlignment="viewStart"
         app:backgroundTint="@color/black"
         app:cornerRadius="0dp"
-        app:icon="@drawable/ic_baseline_arrow_right_alt_24"
+        app:icon="@drawable/ic_arrow_right_alt_24"
         app:iconGravity="end" />
 
 </LinearLayout>

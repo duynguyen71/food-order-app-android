@@ -17,10 +17,15 @@ public class MainViewModel extends ViewModel {
 
     private MutableLiveData<HashMap<Integer, Object>> bag;
 
+    private MutableLiveData<Boolean> isUsingGridView;
+
     public MainViewModel() {
         products = new MutableLiveData<>();
         bag = new MutableLiveData<>();
+        bag.setValue(new HashMap<>());
 
+        isUsingGridView = new MutableLiveData<>();
+        isUsingGridView.setValue(true);
 
 
     }

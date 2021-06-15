@@ -133,6 +133,72 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Quality"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="60dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btn_minus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@drawable/ic_baseline_horizontal_rule_24"
+                        android:tint="@color/black" />
+
+                    <TextView
+                        android:id="@+id/qualityCounter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:foregroundTint="@color/black"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:text="1"
+                        android:textColor="@color/black" />
+
+                    <ImageButton
+                        android:id="@+id/btn_plus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:src="@drawable/ic_add_24"
+                        android:tint="@color/black" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/dividesr"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="?android:attr/listDivider" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="10dp">
 
@@ -144,7 +210,7 @@
                     android:text="Add to bag"
                     android:textColor="@color/black"
                     app:cornerRadius="0dp"
-                    app:icon="@drawable/ic_baseline_add_shopping_cart_24"
+                    app:icon="@drawable/ic_add_shopping_cart_24"
                     app:iconGravity="end"
                     app:iconTint="@color/black"
                     app:strokeColor="@color/black" />
@@ -156,7 +222,7 @@
                     android:text="Buy it now"
                     app:backgroundTint="@color/black"
                     app:cornerRadius="0dp"
-                    app:icon="@drawable/ic_baseline_arrow_right_alt_24"
+                    app:icon="@drawable/ic_arrow_right_alt_24"
                     app:iconGravity="end" />
             </LinearLayout>
 
@@ -169,6 +235,7 @@
                 android:background="?android:attr/listDivider" />
 
             <include
+                android:id="@+id/ratings_reviews_container"
                 layout="@layout/raitings_and_reviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

@@ -1,5 +1,8 @@
 package com.learn.kdnn.model;
 
+import java.util.Date;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,13 +14,13 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Product {
+public class Order {
 
-    private int id;
-    private String name;
-    private double price;
-    private double discountPer;
-    private String category;
-    private String primaryImgUrl;
-    private String[] thumbnailImgUrl;
+    private int orderId;
+    private Date orderDate;
+    private Date deliveryDate;
+    private List<Product> products;
+    private User user;
+
+
 }

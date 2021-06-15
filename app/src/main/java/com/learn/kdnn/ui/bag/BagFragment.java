@@ -18,6 +18,7 @@ import com.learn.kdnn.MainActivity;
 import com.learn.kdnn.MainViewModel;
 import com.learn.kdnn.R;
 import com.learn.kdnn.databinding.FragmentBagBinding;
+import com.learn.kdnn.model.CartItem;
 import com.learn.kdnn.model.Product;
 import com.learn.kdnn.ui.checkout.CheckoutFragment;
 
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class BagFragment extends Fragment {
+public class BagFragment extends Fragment implements BagItemViewAdapter.OnOptionsClickListener {
 
     private FragmentBagBinding binding;
     private MainViewModel viewModel;
@@ -39,14 +40,16 @@ public class BagFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.getBag().observe(requireActivity(), bagMap -> {
-            if (bagMap != null && !bagMap.isEmpty()) {
-                List<Product> products = new ArrayList<>();
+            if (bagMap != null ) {
+                List<CartItem> cart = new ArrayList<>();
                 Set<Integer> keys = bagMap.keySet();
                 for (Integer key :
                         keys) {
-                    products.add((Product) bagMap.get(key));
+                    CartItem item = (CartItem) bagMap.get(key);
+                    cart.add(item);
                 }
-                BagItemViewAdapter adapter = new BagItemViewAdapter(products,getContext());
+                BagItemViewAdapter adapter = new BagItemViewAdapter(cart,getContext());
+                adapter.setOnOptionsClickListener(this);
                 recyclerView.setAdapter(adapter);
             }
         });
@@ -64,4 +67,9 @@ public class BagFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-}
+
+    @Override
+    public void onOptionClick(int index, Product product) {
+        FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
+        new BagItemOptionsFragment(product.getId()).show(manager,"bag item options fragment");
+}}
