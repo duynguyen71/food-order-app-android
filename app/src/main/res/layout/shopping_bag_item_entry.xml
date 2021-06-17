@@ -36,7 +36,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/textView16"
+                android:id="@+id/bag_item_discount_per"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#F80C0C"

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="Update your info before continute?"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/textView30"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed-light"
+                    android:paddingVertical="10dp"
+                    android:text="Those information will help order process faster" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/closeRequireUpdateInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:background="@null"
+                app:srcCompat="@drawable/ic_baseline_close_24"
+                app:tint="@color/black" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/openUpdateInfoDialog"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginVertical="15dp"
+            android:fontFamily="sans-serif-condensed"
+            android:paddingLeft="10dp"
+            android:paddingTop="0dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="0dp"
+            android:text="Ok"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:strokeColor="@color/black" />
+    </LinearLayout>
+
+</RelativeLayout>

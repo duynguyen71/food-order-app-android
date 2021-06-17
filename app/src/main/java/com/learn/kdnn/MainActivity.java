@@ -1,6 +1,7 @@
 package com.learn.kdnn;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -9,6 +10,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -23,24 +26,32 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.learn.kdnn.databinding.ActivityMainBinding;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private final String TAG = getClass().getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (!isInternetConected()) {
             this.showConnectInternetDialog();
         }
-        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        //update bag counter
         updateBagCounter(viewModel.getBag().getValue().size());
         setContentView(binding.getRoot());
 
@@ -68,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        //view shopping cart
         binding.appBarMain.shoppingCard.setOnClickListener(v -> navController.navigate(R.id.action_nav_home_to_nav_bag));
+        //acount setting
         binding.appBarMain.accountCircle.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(this, binding.appBarMain.accountCircle);
             popupMenu.inflate(R.menu.account_setting);
@@ -79,16 +92,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 logout.setTitle("Login");
             }
             popupMenu.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.item_logout) {
-                    FirebaseAuth.getInstance().signOut();
-                    Intent i = new Intent(this, LoginActivity.class);
-                    startActivity(i);
-                    this.finish();
-                }
-                return false;
+                return handleAccountPopupItemMenuClick(item);
             });
         });
 
+
+//        showUpdateInfoDialog();
+
+    }
+
+    private boolean handleAccountPopupItemMenuClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_logout: {
+                FirebaseAuth.getInstance().signOut();
+                Intent i = new Intent(this, LoginActivity.class);
+                startActivity(i);
+                this.finish();
+                break;
+            }
+            case R.id.item_my_account: {
+                Intent i = new Intent(this, AccountActivity.class);
+                startActivity(i);
+                break;
+            }
+        }
+        return true;
+    }
+
+    private void showUpdateInfoDialog() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        firestore
+                .collection("users")
+                .document(currentUser.getUid())
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        Map<String, Object> data = snapshot.getData();
+                        Log.d(TAG, "onSuccess: " + data.toString());
+                    } else {
+                        Dialog dialog = new Dialog(MainActivity.this);
+                        dialog.setContentView(getLayoutInflater().inflate(R.layout.dialog_require_update_info, null, false));
+                        dialog.show();
+                        ImageButton btnClose = (ImageButton) dialog.findViewById(R.id.closeRequireUpdateInfo);
+                        Button btnOpenUpdate = (Button) dialog.findViewById(R.id.openUpdateInfoDialog);
+                        btnClose.setOnClickListener(v -> dialog.dismiss());
+                        btnOpenUpdate.setOnClickListener(v -> {
+                        });
+                        Log.d(TAG, "onSuccess: " + "no such data");
+                    }
+                })
+                .addOnFailureListener(e -> {
+//                    No internet
+                });
     }
 
 
@@ -96,23 +152,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if ((wifi != null && wifi.isConnected()) || (mobile != null && mobile.isConnected())) {
-            return true;
-        } else {
-            return false;
-        }
+        return (wifi != null && wifi.isConnected()) || (mobile != null && mobile.isConnected());
     }
 
     private void showConnectInternetDialog() {
         new AlertDialog.Builder(this)
                 .setMessage("Please connect to network first")
                 .setCancelable(false)
-                .setPositiveButton("Connect", ((dialog, which) -> {
-                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                }))
-                .setNegativeButton("Cancel", ((dialog, which) -> {
-                    dialog.dismiss();
-                }))
+                .setPositiveButton("Connect", ((dialog, which) -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS))))
+                .setNegativeButton("Cancel", ((dialog, which) -> dialog.dismiss()))
                 .show();
 
     }

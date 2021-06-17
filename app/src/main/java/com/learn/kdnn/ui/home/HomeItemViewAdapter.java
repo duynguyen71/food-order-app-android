@@ -67,12 +67,12 @@ public class HomeItemViewAdapter extends RecyclerView.Adapter<HomeItemViewAdapte
             //standard price
             TextView tvStandardPrice = holder.tvStandardPrice;
             tvStandardPrice.setVisibility(View.VISIBLE);
-            tvStandardPrice.setText("$" + temp);
+            tvStandardPrice.setText("$" +  String.format("%.2f",temp));
             tvStandardPrice.setPaintFlags(tvStandardPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             //sales price
             salesPrice = salesPrice - salesPrice * (product.getDiscountPer() / 100);
         }
-        holder.tvPrice.setText("$" + salesPrice);
+        holder.tvPrice.setText("$" + String.format("%.2f",salesPrice));
 
 
         Glide.with(context)

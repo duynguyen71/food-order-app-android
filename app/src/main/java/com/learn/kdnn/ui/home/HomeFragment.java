@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -36,14 +35,12 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
     private MainViewModel mainViewModel;
     private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -81,16 +78,14 @@ public class HomeFragment extends Fragment {
             mainViewModel.getIsUsingGridView().setValue(!isUsingGridView);
         });
 
-        binding.btnFiilter.setOnClickListener(v -> {
-            showFilterOptionsFragment();
-        });
+        binding.btnFiilter.setOnClickListener(v -> showFilterOptionsFragment());
 
         Spinner spinner = binding.spinner;
-            List<String> categories = new ArrayList<>();
-            categories.add("Fast food");
-            categories.add("Drink");
-            categories.add("Cake");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item,categories);
+        List<String> categories = new ArrayList<>();
+        categories.add("Fast food");
+        categories.add("Drink");
+        categories.add("Cake");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, categories);
         spinner.setAdapter(adapter);
         return root;
     }
@@ -105,10 +100,36 @@ public class HomeFragment extends Fragment {
         Product product3 = new Product(4, "Hambugur", 2.2, 0.0, "Drink", "https://images.pexels.com/photos/338713/pexels-photo-338713.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
         Product product4 = new Product(5, "Hambugur", 1.26, 0.0, "Fast Food", "https://images.pexels.com/photos/704569/pexels-photo-704569.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
         Product product5 = new Product(6, "Hambugur", 3.25, 0.0, "Fast Food", primaryImgurl, null);
-        Product product6 = new Product(7, "Capuchino", 1.00, 5.0, "Fast Food", "https://images.pexels.com/photos/7678003/pexels-photo-7678003.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
-        List<Product> products = Arrays.asList(product, product1, product2, product3, product4, product5, product6);
+        Product product6 = new Product(7, "Capuchino", 5.00, 5.0, "Fast Food", "https://images.pexels.com/photos/1437629/pexels-photo-1437629.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
+        Product product7 = new Product(8, "Capuchino", 4.00, 5.0, "Fast Food", "https://images.pexels.com/photos/6858636/pexels-photo-6858636.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
+        Product product8 = new Product(9, "Capuchino", 1.35, 5.0, "Fast Food", "https://images.pexels.com/photos/339696/pexels-photo-339696.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
+        Product product9 = new Product(10, "Capuchino", 1.30, 5.0, "Fast Food", "https://images.pexels.com/photos/7678003/pexels-photo-7678003.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
+        Product product10 = new Product(32, "Capuchino", 6.00, 5.0, "Fast Food", "https://images.pexels.com/photos/7678003/pexels-photo-7678003.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
+        Product product11 = new Product(53, "Capuchino", 7.50, 5.0, "Fast Food", "https://images.pexels.com/photos/7678003/pexels-photo-7678003.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
+        Product product12 = new Product(212, "Capuchino", 3.250, 5.0, "Fast Food", "https://images.pexels.com/photos/7678003/pexels-photo-7678003.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
+        Product product13 = new Product(45, "Capuchino", 1.25, 5.0, "Fast Food", "https://images.pexels.com/photos/7678003/pexels-photo-7678003.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500", null);
+        List<Product> products = Arrays.asList(product, product1, product2, product3, product4, product5, product6, product7, product8, product9, product10, product11, product12, product13);
         AppCacheManage.products = products;
+
+        addProductToBag(mainViewModel);
         return products;
+    }
+
+
+    private HashMap<Integer, Object> addProductToBag(MainViewModel mainViewModel) {
+        HashMap<Integer, Object> bag = mainViewModel.getBag().getValue();
+        if (bag == null) {
+            bag = new HashMap<>();
+            mainViewModel.getBag().setValue(bag);
+        }
+
+        Product p = AppCacheManage.products.get(0);
+        Product p2 = AppCacheManage.products.get(1);
+        bag.put(p.getId(), new CartItem(p, 5));
+        bag.put(p2.getId(), new CartItem(p2, 3));
+
+
+        return bag;
     }
 
     private void showFilterOptionsFragment() {

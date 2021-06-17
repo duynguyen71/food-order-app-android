@@ -1,12 +1,13 @@
 package com.learn.kdnn.ui.product;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -38,6 +39,9 @@ import java.util.Map;
 public class ProductDetailsFragment extends Fragment implements View.OnClickListener {
 
     public static final String PRODUCT_INDEX = "index";
+    public static final String STANDARD_PRICE = "standardPrice";
+    public static final String SALES_PRICE = "salesPrice";
+
     private FragmentProductDetailsBinding binding;
     private MainActivity mainActivity;
     private int index;
@@ -61,10 +65,21 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
         MainViewModel mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         Product product = AppCacheManage.products.get(index);
+        double salesPrice = product.getPrice();
+        double temp;
+        if (product.getDiscountPer() > 0) {
+            salesPrice = product.getPrice();
+            temp = salesPrice;
 
+            TextView tvStandardPrice = binding.standardPrice;
+            tvStandardPrice.setText("$" + String.format("%.2f",temp));
+            tvStandardPrice.setPaintFlags(tvStandardPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            salesPrice = salesPrice - salesPrice * (product.getDiscountPer() / 100);
+        }
         binding.name.setText(product.getName());
-        binding.salesPrice.setText("$" + product.getPrice());
-        binding.standardPrice.setText("$" + product.getDiscountPer());
+
+        binding.salesPrice.setText("$" + String.format("%.2f",salesPrice));
+
         binding.category.setText(product.getCategory());
 
         Glide.with(getContext()).load(product.getPrimaryImgUrl())
@@ -124,8 +139,8 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
                         new Comment(3, user2, "LMAO"));
 
         RecyclerView commentsView = binding.ratingsReviewsContainer.commentsView;
-        commentsView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
-        CommentItemAdapter adapter = new CommentItemAdapter(getContext(),commentList,getLayoutInflater());
+        commentsView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        CommentItemAdapter adapter = new CommentItemAdapter(getContext(), commentList, getLayoutInflater());
         commentsView.setAdapter(adapter);
     }
 

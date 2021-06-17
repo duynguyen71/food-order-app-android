@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-condensed"
             android:text="SHOPPING BAG"
             android:textAllCaps="true"
             android:textColor="@color/black"
@@ -48,28 +49,40 @@
     </LinearLayout>
 
     <LinearLayout
-        android:paddingHorizontal="20dp"
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <TextView
-            android:id="@+id/textView14"
+            android:id="@+id/productInBag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:text="20 "
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/textView12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="20 PROUCTS" />
+            android:fontFamily="sans-serif-condensed"
+            android:text="  Products"
+            android:textAllCaps="true"
+            android:textColor="@color/black" />
+
     </LinearLayout>
 
     <View
-        android:layout_marginHorizontal="20dp"
         android:id="@+id/dividerrr"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="10dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
@@ -79,23 +92,26 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintBottom_toTopOf="@+id/checkout_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dividerrr"
         tools:itemCount="10"
-        tools:listitem="@layout/shopping_bag_item_entry" />
+        tools:listitem="@layout/shopping_bag_item_entry"
+        tools:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/checkout_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
         android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,7 +129,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView24"
+                android:id="@+id/bagTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -125,16 +141,53 @@
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:paddingVertical="12dp"
             android:id="@+id/btn_checkout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingVertical="12dp"
             android:text="Check out"
             android:textAlignment="viewStart"
             app:backgroundTint="@color/black"
             app:cornerRadius="0dp"
             app:icon="@drawable/ic_arrow_right_alt_24"
             app:iconGravity="end" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="There is no product"
+            android:textColor="@color/black"
+            android:textSize="24sp" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Shop now"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:textSize="10sp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

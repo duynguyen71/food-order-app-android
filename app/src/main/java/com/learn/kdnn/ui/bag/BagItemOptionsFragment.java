@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.NumberPicker;
 
 import androidx.lifecycle.ViewModelProvider;
 
@@ -32,7 +33,6 @@ public class BagItemOptionsFragment extends BottomSheetDialogFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setCancelable(false);
         if (getArguments() != null) {
             this.productId = getArguments().getInt(PRODUCT_ID);
         }
@@ -47,7 +47,7 @@ public class BagItemOptionsFragment extends BottomSheetDialogFragment implements
 
         binding.closeBagItemOptions.setOnClickListener(this);
         binding.removeFromBag.setOnClickListener(this);
-
+        binding.editQuality.setOnClickListener(this);
         return binding.getRoot();
     }
 
@@ -67,6 +67,9 @@ public class BagItemOptionsFragment extends BottomSheetDialogFragment implements
                 mainViewModel.getBag().setValue(items);
                 this.dismiss();
                 break;
+            }
+            case R.id.editQuality:{
+
             }
             default: {
                 this.dismiss();

@@ -25,4 +25,10 @@
     <string name="tv_menu">⋮</string>
     <string name="setting">Setting</string>
     <string name="order">Order</string>
+    <string name="title_activity_account">Account</string>
+
+    <!--    tabblet-->
+    <string name="tab_text_1">Account</string>
+    <string name="tab_text_2">Orders</string>
+    <string name="tab_text_3">Settings</string>
 </resources>

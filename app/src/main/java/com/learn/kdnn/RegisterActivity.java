@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,11 +24,17 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        getSupportActionBar().hide();
+
 
         TextInputEditText etEmail = binding.signUpEmail;
         TextInputEditText etPassword = binding.signUpPassword;
+        binding.closeRegister.setOnClickListener(v->{
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
         binding.btnSignUp.setOnClickListener(v -> {
+            hideKeyBoard();
             binding.registerLoader.setVisibility(View.VISIBLE);
             etEmail.setError(null);
             etPassword.setError(null);
@@ -35,7 +43,11 @@ public class RegisterActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(email)) {
                 etEmail.setError("Email is blank!");
                 binding.registerLoader.setVisibility(View.GONE);
-
+                return;
+            }
+            if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                etEmail.setError("Your email is not valid!");
+                binding.registerLoader.setVisibility(View.GONE);
                 return;
             }
 
@@ -43,7 +55,6 @@ public class RegisterActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(pass)) {
                 etPassword.setError("Password is bank!");
                 binding.registerLoader.setVisibility(View.GONE);
-
                 return;
             }
 
@@ -63,5 +74,13 @@ public class RegisterActivity extends AppCompatActivity {
                     });
 
         });
+    }
+    private void hideKeyBoard() {
+        InputMethodManager manager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
+        View focus = getCurrentFocus();
+        if(focus==null){
+            return;
+        }
+        manager.hideSoftInputFromWindow(focus.getWindowToken(),0);
     }
 }

@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/item_setting"
+        android:id="@+id/item_my_account"
         android:icon="@drawable/ic_baseline_settings_24"
-        android:title="@string/setting" />
+        android:title="My Account" />
     <item
         android:id="@+id/item_order"
         android:title="@string/order" />

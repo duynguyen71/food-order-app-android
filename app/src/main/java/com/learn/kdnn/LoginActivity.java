@@ -3,7 +3,9 @@ package com.learn.kdnn;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,8 +27,10 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        binding.closeLogin.setOnClickListener(v->{
+            startMainActivity();
+        });
         setContentView(binding.getRoot());
-        getSupportActionBar().hide();
         binding
                 .dosignup
                 .setOnClickListener(v -> {
@@ -34,11 +38,11 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 });
 
-
         TextInputEditText etEmail = binding.signInEmail;
         TextInputEditText etPassword = binding.signInPassword;
 
         binding.btnDoSignIn.setOnClickListener(v -> {
+            hideKeyBoard();
             binding.loginLoader.setVisibility(View.VISIBLE);
             etEmail.setError(null);
             etPassword.setError(null);
@@ -46,7 +50,11 @@ public class LoginActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(email)) {
                 etEmail.setError("Your email is blank!");
                 binding.loginLoader.setVisibility(View.GONE);
-
+                return;
+            }
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.setError("Your email is not valid!");
+                binding.loginLoader.setVisibility(View.GONE);
                 return;
             }
             String pass = etPassword.getText().toString();
@@ -69,6 +77,15 @@ public class LoginActivity extends AppCompatActivity {
                     });
         });
 
+    }
+
+    private void hideKeyBoard() {
+        InputMethodManager manager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
+        View focus = getCurrentFocus();
+        if(focus==null){
+            return;
+        }
+        manager.hideSoftInputFromWindow(focus.getWindowToken(),0);
     }
 
     private void startMainActivity() {

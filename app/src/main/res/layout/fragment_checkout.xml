@@ -39,42 +39,15 @@
         </LinearLayout>
 
         <HorizontalScrollView
-            android:layout_width="match_parent"
+            android:id="@+id/hihik"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/checkoutImgGp"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    tools:srcCompat="@tools:sample/avatars" />
-
-                <ImageView
-                    android:id="@+id/imageView5"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
-                    tools:srcCompat="@tools:sample/avatars" />
-
-                <ImageView
-                    android:id="@+id/imageView6"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
-                    tools:srcCompat="@tools:sample/avatars" />
-
-                <ImageView
-                    android:id="@+id/imageView7"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
-                    tools:srcCompat="@tools:sample/avatars" />
-
-            </LinearLayout>
+                android:layout_height="80dp"
+                android:orientation="horizontal"/>
         </HorizontalScrollView>
 
     </LinearLayout>
@@ -106,7 +79,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray" />
+        android:background="#c9c9c9" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -135,7 +108,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray" />
+        android:background="#c9c9c9" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -184,7 +157,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray" />
+        android:background="#c9c9c9" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_view_bag"

@@ -1,6 +1,7 @@
 package com.learn.kdnn.model;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,5 +21,6 @@ public class User {
     private String phoneNumber;
     private String avatarUrl;
     private Date dateCreated;
+    private List<ShippingAddress> shippingAddress;
 
 }

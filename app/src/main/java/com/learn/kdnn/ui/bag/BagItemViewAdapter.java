@@ -54,6 +54,14 @@ public class BagItemViewAdapter extends RecyclerView.Adapter<BagItemViewAdapter.
         holder.tvName.setText(product.getName());
         holder.tvPrice.setText("$" + product.getPrice());
         holder.tvQuality.setText(String.valueOf(cartitem.getQuality()));
+        double discountPer = cartitem.getProduct().getDiscountPer();
+        if(discountPer>0){
+            holder.tvDiscountPer.setText(String.valueOf(discountPer));
+
+        }else{
+            holder.tvDiscountPer.setVisibility(View.GONE);
+        }
+
         holder.tvOptions.setOnClickListener(v->{
             if(onOptionsClickListener!=null){
                 onOptionsClickListener.onOptionClick(position,product);
@@ -73,7 +81,7 @@ public class BagItemViewAdapter extends RecyclerView.Adapter<BagItemViewAdapter.
 
     public class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvPrice, tvName,tvOptions,tvQuality;
+        TextView tvPrice, tvName,tvOptions,tvQuality,tvDiscountPer;
         ImageView primaryImg;
 
         public ItemViewHolder(@NonNull @NotNull View itemView) {
@@ -83,6 +91,7 @@ public class BagItemViewAdapter extends RecyclerView.Adapter<BagItemViewAdapter.
             primaryImg = itemView.findViewById(R.id.productImg);
             tvOptions = itemView.findViewById(R.id.bagItemOptions);
             tvQuality = itemView.findViewById(R.id.quality);
+            tvDiscountPer = itemView.findViewById(R.id.bag_item_discount_per);
         }
 
     }
