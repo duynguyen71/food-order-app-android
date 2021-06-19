@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity  {
 
     private final String TAG = getClass().getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportActionBar().hide();
             } else {
                 getSupportActionBar().show();
+
             }
         });
 
@@ -178,12 +180,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 || super.onSupportNavigateUp();
     }
 
-
     @Override
-    public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
-        Toast.makeText(this, "MENU ID: " + item.getItemId(), Toast.LENGTH_SHORT).show();
-        Log.d("DS", "onNavigationItemSelected: " + "hihi");
-        return true;
+    public boolean onPrepareOptionsMenu(Menu menu) {
+//        invalidateOptionsMenu();
+        return super.onPrepareOptionsMenu(menu);
     }
 
     public NavController getMainNavController() {
@@ -194,4 +194,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         binding.appBarMain.countBagItem.setText(String.valueOf(i));
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Toast.makeText(this, "HIHIH", Toast.LENGTH_SHORT).show();
+        return super.onOptionsItemSelected(item);
+    }
 }
