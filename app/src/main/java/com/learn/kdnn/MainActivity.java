@@ -10,7 +10,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -30,28 +29,30 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.learn.kdnn.databinding.ActivityMainBinding;
-
-import org.jetbrains.annotations.NotNull;
+import com.learn.kdnn.model.User;
 
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         if (!isInternetConected()) {
             this.showConnectInternetDialog();
         }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            getUserInfo();
+        }
         //update bag counter
         updateBagCounter(viewModel.getBag().getValue().size());
         setContentView(binding.getRoot());
@@ -103,22 +104,61 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    private User getUserInfo() {
+
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(FirebaseAuth.getInstance().getUid())
+                .addSnapshotListener((value, error) -> {
+                    Map<String, Object> data = value.getData();
+                    User user = null;
+                    if (value.exists() && data != null) {
+                        user = new User();
+                        user.setAddress((String) data.get("address"));
+                        user.setPhoneNumber((String) data.get("phone"));
+                    }
+                    Log.d(TAG, "getUserInfo: " + user.toString());
+                    viewModel.getUser().setValue(user);
+                });
+        return null;
+    }
+
     private boolean handleAccountPopupItemMenuClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_logout: {
                 FirebaseAuth.getInstance().signOut();
-                Intent i = new Intent(this, LoginActivity.class);
-                startActivity(i);
-                this.finish();
+                startLoginActivity();
                 break;
             }
             case R.id.item_my_account: {
-                Intent i = new Intent(this, AccountActivity.class);
-                startActivity(i);
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    Intent i = new Intent(this, AccountActivity.class);
+                    startActivity(i);
+                } else {
+                    startLoginActivity();
+                }
+
+                break;
+            }
+            case R.id.item_my_order: {
+
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    Intent i = new Intent(this, AccountActivity.class);
+                    i.putExtra(AccountActivity.ARG_VIEW_PAGER_POS,1);
+                    startActivity(i);
+                } else {
+                    startLoginActivity();
+                }
                 break;
             }
         }
         return true;
+    }
+
+    private void startLoginActivity() {
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+        this.finish();
     }
 
     private void showUpdateInfoDialog() {

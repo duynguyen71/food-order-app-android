@@ -16,11 +16,15 @@ import lombok.ToString;
 @ToString
 public class Order {
 
-    private int orderId;
+    private String orderId;
+    private String userId;
     private Date orderDate;
     private Date deliveryDate;
-    private List<Product> products;
+    private List<CartItem> cartItems;
     private User user;
+    private double totalStandardPrice;
+    private ShippingAddress shippingAddress;
+    private double totalPrice;
 
 
 }

@@ -134,7 +134,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView192"
+                android:id="@+id/checkoutSalesPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
@@ -143,7 +143,7 @@
                 android:textColor="#FF2525" />
 
             <TextView
-                android:id="@+id/textView25"
+                android:id="@+id/checkoutStandardPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
@@ -160,7 +160,7 @@
         android:background="#c9c9c9" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_view_bag"
+        android:id="@+id/btnPlaceOrder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"

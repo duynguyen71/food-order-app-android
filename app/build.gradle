@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.learn.kdnn"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -32,7 +32,6 @@ android {
 
 
 apply plugin: 'com.google.gms.google-services'
-
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -44,10 +43,17 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.annotation:annotation:1.2.0'
-    implementation 'com.google.firebase:firebase-firestore:23.0.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+
+    implementation platform('com.google.firebase:firebase-bom:28.0.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-auth'
 
     //lombok
     compileOnly "org.projectlombok:lombok:1.18.20"
@@ -55,11 +61,10 @@ dependencies {
     //glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
-    //firebase
-    implementation platform('com.google.firebase:firebase-bom:28.1.0')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-auth'
+
     //circle image view
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+
 
 }

@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class User {
 
     private int id;
@@ -21,6 +23,7 @@ public class User {
     private String phoneNumber;
     private String avatarUrl;
     private Date dateCreated;
-    private List<ShippingAddress> shippingAddress;
+    private String address;
+    private List<String> addresses;
 
 }

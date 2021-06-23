@@ -1,6 +1,7 @@
 package com.learn.kdnn;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +9,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
@@ -17,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.learn.kdnn.databinding.ActivityAccountBinding;
 import com.learn.kdnn.databinding.DialogChooseMgBinding;
+import com.learn.kdnn.ui.account.AccountViewModel;
 import com.learn.kdnn.ui.account.SectionsPagerAdapter;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -26,20 +29,24 @@ public class AccountActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private CircleImageView avatar;
 
+    public static final String ARG_VIEW_PAGER_POS = "viewPagerPosition";
+    private Integer pagerPosition =0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
         com.learn.kdnn.databinding.ActivityAccountBinding binding = ActivityAccountBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        new ViewModelProvider(this).get(AccountViewModel.class);
+        ViewPager viewPager = setUpViewPager(binding);
 
-        SectionsPagerAdapter sectionsPagerAdapter =
-                new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = binding.viewPager;
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = binding.tabs;
-        tabs.setupWithViewPager(viewPager);
+        Bundle bundle = getIntent().getExtras();
+        if(bundle!=null){
+            pagerPosition = bundle.getInt(ARG_VIEW_PAGER_POS);
+        }
 
+        viewPager.setCurrentItem(pagerPosition);
 
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
@@ -47,26 +54,46 @@ public class AccountActivity extends AppCompatActivity {
             avatar = binding.avatar;
             loadImgAvatar(photoUrl, avatar);
         }
-        binding.btnUpdateImage.setOnClickListener(v -> {
-            Dialog dialog = new Dialog(this);
-            DialogChooseMgBinding binding1 = DialogChooseMgBinding.inflate(getLayoutInflater());
-            dialog.setContentView(binding1.getRoot());
-            dialog.show();
-            binding1.etImgURL.setText("https://images.pexels.com/photos/774731/pexels-photo-774731.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500");
-            binding1.saveImg.setOnClickListener(v1 -> {
-                String URL = binding1.etImgURL.getText().toString();
-                if (TextUtils.isEmpty(URL)) {
-                    return;
-                }
-                loadImgAvatar(Uri.parse(URL),this.avatar);
-                Handler handler = new Handler();
-                Thread thread = new Thread(() -> updateUserImage(URL, handler));
-                thread.start();
+        binding.btnUpdateImage.setOnClickListener(v -> handleUpdateImage());
+        binding.btnCloseAccountActivity.setOnClickListener(v -> handleBtnClose());
 
-                dialog.dismiss();
-            });
+    }
+
+    private ViewPager setUpViewPager(ActivityAccountBinding binding) {
+        SectionsPagerAdapter sectionsPagerAdapter =
+                new SectionsPagerAdapter(this, getSupportFragmentManager());
+        ViewPager viewPager = binding.viewPager;
+        viewPager.setAdapter(sectionsPagerAdapter);
+        TabLayout tabs = binding.tabs;
+        tabs.setupWithViewPager(viewPager);
+
+        return viewPager;
+        //
+    }
+
+    private void handleUpdateImage() {
+        Dialog dialog = new Dialog(this);
+        DialogChooseMgBinding binding1 = DialogChooseMgBinding.inflate(getLayoutInflater());
+        dialog.setContentView(binding1.getRoot());
+        dialog.show();
+        binding1.etImgURL.setText("https://images.pexels.com/photos/774731/pexels-photo-774731.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500");
+        binding1.saveImg.setOnClickListener(v1 -> {
+            String URL = binding1.etImgURL.getText().toString();
+            if (TextUtils.isEmpty(URL)) {
+                return;
+            }
+            loadImgAvatar(Uri.parse(URL), this.avatar);
+            Handler handler = new Handler();
+            Thread thread = new Thread(() -> updateUserImage(URL, handler));
+            thread.start();
+
+            dialog.dismiss();
         });
+    }
 
+    private void handleBtnClose() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
     }
 
     private void loadImgAvatar(Uri photoUrl, CircleImageView avatar) {

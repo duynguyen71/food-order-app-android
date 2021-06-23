@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_baseline_settings_24"
         android:title="My Account" />
     <item
-        android:id="@+id/item_order"
+        android:id="@+id/item_my_order"
         android:title="@string/order" />
     <item
         android:id="@+id/item_logout"

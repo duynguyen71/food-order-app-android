@@ -46,7 +46,7 @@
         android:id="@+id/nav_bag"
         android:name="com.learn.kdnn.ui.bag.BagFragment"
         android:label="bag_fragment"
-        tools:layout="@layout/fragment_bag" >
+        tools:layout="@layout/fragment_bag">
         <action
             android:id="@+id/action_nav_bag_to_nav_home"
             app:destination="@id/nav_home" />

@@ -3,7 +3,8 @@
     package="com.learn.kdnn">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,13 +15,19 @@
         <activity
             android:name=".AccountActivity"
             android:label="@string/title_activity_account"
-            android:theme="@style/Theme.Kdnn.NoActionBar"></activity>
+            android:theme="@style/Theme.Kdnn.NoActionBar">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
         <activity
             android:name=".RegisterActivity"
             android:theme="@style/Theme.Kdnn.NoActionBar" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/Theme.Kdnn.NoActionBar"></activity>
+            android:theme="@style/Theme.Kdnn.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

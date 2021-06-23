@@ -32,7 +32,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0: {
-                fragmentClass = AccountFragment.class;
+                fragmentClass = AccountMainFragment.class;
                 break;
             }
             case 1: {

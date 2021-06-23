@@ -1,8 +1,8 @@
 package com.learn.kdnn.ui.bag;
 
 
+import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +22,19 @@ import com.learn.kdnn.databinding.FragmentBagBinding;
 import com.learn.kdnn.model.CartItem;
 import com.learn.kdnn.model.Product;
 import com.learn.kdnn.ui.checkout.CheckoutFragment;
+import com.learn.kdnn.utils.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class BagFragment extends Fragment implements BagItemViewAdapter.OnOptionsClickListener {
 
     private FragmentBagBinding binding;
     private MainViewModel viewModel;
+
+    private double totalSalesPrice;
+    private double totalStandardPrice;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -52,7 +55,13 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
                 binding.checkoutContainer.setVisibility(View.VISIBLE);
 
                 binding.productInBag.setText(String.valueOf(bagMap.size()));
-                binding.bagTotal.setText("$"+String.format("%.2f",getTotalPrice(bagMap)));
+                this.totalSalesPrice = AppUtils.getTotalSalesPrice(bagMap);
+                binding.bagTotal.setText("$"+String.format("%.2f", totalSalesPrice));
+                this.totalStandardPrice = AppUtils.getDefailtPrice(bagMap);
+                binding.tvTotalStandardPrice.setText("$"+String.format("%.2f", this.totalStandardPrice));
+                binding.tvTotalStandardPrice.setPaintFlags(   binding.tvTotalStandardPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                
+
                 List<CartItem> cart = new ArrayList<>();
                 Set<Integer> keys = bagMap.keySet();
                 for (Integer key :
@@ -72,10 +81,11 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
             }
         });
 
+        //TODO:sleect shipping method
         binding.btnReturnHome.setOnClickListener(v -> ((MainActivity) getContext()).getMainNavController().navigate(R.id.action_nav_bag_to_nav_home));
         binding.btnCheckout.setOnClickListener(v -> {
             FragmentManager mana = ((MainActivity) getContext()).getSupportFragmentManager();
-            new CheckoutFragment().show(mana, "check out fragment");
+                CheckoutFragment.newInstance(viewModel.getShippingMethod().getValue()).show(mana, "check out fragment");
         });
         return binding.getRoot();
     }
@@ -86,21 +96,7 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
         binding = null;
     }
 
-    public double getTotalPrice(Map<Integer, Object> bag) {
-        double rs = 0;
-        Set<Integer> keys = bag.keySet();
-        for (Integer key :
-                keys) {
-            CartItem item = (CartItem)bag.get(key);
-            int quality = item.getQuality();
-            double standardPrice = item.getProduct().getPrice();
-            double per = item.getProduct().getDiscountPer();
-            Log.d("hih", "getTotalPrice: "+(double)per/100);
-            rs+= quality*(standardPrice - (standardPrice * per / 100));
 
-        }
-        return rs;
-    }
 
     @Override
     public void onOptionClick(int index, Product product) {

@@ -100,20 +100,7 @@
         android:background="@android:color/darker_gray" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_continute_buy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:text="Continute Buy"
-        android:textAlignment="viewStart"
-        app:backgroundTint="@color/black"
-        app:cornerRadius="0dp"
-        app:icon="@drawable/ic_arrow_right_alt_24"
-        app:iconGravity="end" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_view_bag"
+        android:id="@+id/btnViewBag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"

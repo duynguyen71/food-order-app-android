@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -15,6 +16,7 @@ import com.learn.kdnn.MainActivity;
 import com.learn.kdnn.R;
 import com.learn.kdnn.databinding.FragmentViewAddedItemBinding;
 import com.learn.kdnn.model.Product;
+import com.learn.kdnn.ui.bag.BagFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +28,7 @@ public class ViewAddedItemBottomSheet extends BottomSheetDialogFragment implemen
     private int index;
     private int quality;
 
-    public static ViewAddedItemBottomSheet newInstance(int index,int quality) {
+    public static ViewAddedItemBottomSheet newInstance(int index, int quality) {
         ViewAddedItemBottomSheet fragment = new ViewAddedItemBottomSheet();
         Bundle args = new Bundle();
         args.putInt(ADDED_ITEM_INDEX, index);
@@ -55,7 +57,6 @@ public class ViewAddedItemBottomSheet extends BottomSheetDialogFragment implemen
         binding.btnClose.setOnClickListener(v -> this.dismiss());
 
         binding.btnViewBag.setOnClickListener(this);
-                binding.btnContinuteBuy.setOnClickListener(this);
 
         Product addedProduct = AppCacheManage.products.get(this.index);
         binding.addedProductName.setText(addedProduct.getName());
@@ -83,15 +84,21 @@ public class ViewAddedItemBottomSheet extends BottomSheetDialogFragment implemen
     public void onClick(View v) {
         this.dismiss();
         MainActivity mainActivity = (MainActivity) getContext();
-        switch (v.getId()){
-            case R.id.btn_view_bag:{
+        switch (v.getId()) {
+            case R.id.btnPlaceOrder: {
                 mainActivity.getMainNavController().navigate(R.id.action_nav_product_details_to_bagFragment);
                 break;
             }
-            case R.id.btn_continute_buy:{
-                mainActivity.getMainNavController().navigate(R.id.action_nav_product_details_to_nav_home);
-                break;
+            case R.id.btnViewBag: {
+//                FragmentManager manager = mainActivity.getSupportFragmentManager();
+//                manager.beginTransaction()
+//                        .replace(R.id.nav_host_fragment_content_main, BagFragment.class, null)
+//                        .addToBackStack(null)
+//                        .commit();
+                mainActivity.getMainNavController()
+                        .navigate(R.id.action_nav_product_details_to_bagFragment);
             }
+
         }
     }
 }
