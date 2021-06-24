@@ -2,12 +2,16 @@ package com.learn.kdnn.ui.product;
 
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -17,6 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.learn.kdnn.AppCacheManage;
 import com.learn.kdnn.MainActivity;
 import com.learn.kdnn.MainViewModel;
@@ -25,27 +32,27 @@ import com.learn.kdnn.databinding.FragmentProductDetailsBinding;
 import com.learn.kdnn.model.CartItem;
 import com.learn.kdnn.model.Comment;
 import com.learn.kdnn.model.Product;
-import com.learn.kdnn.model.User;
 import com.learn.kdnn.ui.review.CommentItemAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class ProductDetailsFragment extends Fragment implements View.OnClickListener {
+public class ProductDetailsFragment extends Fragment implements View.OnClickListener, CommentItemAdapter.OnRemoveComment {
 
     public static final String PRODUCT_INDEX = "index";
-    public static final String STANDARD_PRICE = "standardPrice";
-    public static final String SALES_PRICE = "salesPrice";
+    private static final String TAG = ProductDetailsFragment.class.getSimpleName();
 
     private FragmentProductDetailsBinding binding;
     private MainActivity mainActivity;
     private int index;
 
+    private CommentItemAdapter commentItemAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,13 +65,17 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = FragmentProductDetailsBinding.inflate(inflater, container, false);
+        TextInputEditText etComment = binding.ratingsReviewsContainer.etComment;
+        etComment.setOnClickListener(v-> etComment.setFocusable(true));
+
+        loadComments();
 
         mainActivity = (MainActivity) getContext();
         MainViewModel mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         Product product = AppCacheManage.products.get(index);
+
         double salesPrice = product.getPrice();
         double temp;
         if (product.getDiscountPer() > 0) {
@@ -72,13 +83,13 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
             temp = salesPrice;
 
             TextView tvStandardPrice = binding.standardPrice;
-            tvStandardPrice.setText("$" + String.format("%.2f",temp));
+            tvStandardPrice.setText("$" + String.format("%.2f", temp));
             tvStandardPrice.setPaintFlags(tvStandardPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             salesPrice = salesPrice - salesPrice * (product.getDiscountPer() / 100);
         }
         binding.name.setText(product.getName());
 
-        binding.salesPrice.setText("$" + String.format("%.2f",salesPrice));
+        binding.salesPrice.setText("$" + String.format("%.2f", salesPrice));
 
         binding.category.setText(product.getCategory());
 
@@ -108,40 +119,86 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
             Map<Integer, Object> items = addProductToBag(mainViewModel);
             ((MainActivity) getContext()).updateBagCounter(items.size());
         });
-        binding.ratingsReviewsContainer.saveMyComment.setOnClickListener(v -> {
-            TextInputEditText etCmt = binding.ratingsReviewsContainer.etComment;
-            String comment = etCmt.getText().toString();
-            if (TextUtils.isEmpty(comment)) {
-                etCmt.setError("Your comment is blank!");
-                return;
-            }
 
-        });
-        loadReviews();
+
+
+
+        setUpWriteComment();
+
+
         return binding.getRoot();
 
     }
 
-    private void loadReviews() {
+    private void setUpWriteComment() {
+        TextInputEditText etComment = binding.ratingsReviewsContainer.etComment;
+        Button btnSaveComment = binding.ratingsReviewsContainer.btnSaveComment;
+        btnSaveComment.setOnClickListener(v -> {
+            Editable text = etComment.getText();
+            if (text == null && TextUtils.isEmpty(text.toString())) {
+                etComment.setError("Your comment is blank!");
+                return;
+            }
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                //TODO:alert dialog
+                return;
+            }
+            String displayName = currentUser.getDisplayName();
+            if (displayName == null || displayName.length() == 0) {
+                displayName = currentUser.getEmail();
+            }
+            Comment comment = new Comment(new Date().getTime(), displayName, currentUser.getUid(), text.toString(), new Date());
+            int productId = AppCacheManage.products.get(index).getId();
+            FirebaseDatabase
+                    .getInstance()
+                    .getReference("comments")
+                    .child(String.valueOf(productId))
+                    .child(currentUser.getUid())
+                    .setValue(comment)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            commentItemAdapter.addComment(comment);
+                            etComment.setText(null);
+                            Toast.makeText(mainActivity, "Your comment has been published", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(mainActivity, "err", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
-        User user = new User();
-        user.setFullName("Nguyen Khanh Duy");
 
-        User user1 = new User();
-        user1.setFullName("Nguyen Phuon Duy");
+        });
+    }
 
-        User user2 = new User();
-        user2.setFullName("Nguyen  Duy");
+    private void loadComments() {
 
-        List<Comment> commentList = Arrays
-                .asList(new Comment(1, user, "HIHI"),
-                        new Comment(2, user1, "LOL"),
-                        new Comment(3, user2, "LMAO"));
+        Product product = AppCacheManage.products.get(index);
+        FirebaseDatabase.getInstance()
+                .getReference("comments")
+                .child(String.valueOf(product.getId()))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Comment> comments = new ArrayList<>();
+                        task.getResult().getChildren().forEach(snapshot -> {
+                            Comment comment = (Comment) snapshot.getValue(Comment.class);
+                            comments.add(comment);
+                        });
+                        setUpCommentViews(comments);
+                        commentItemAdapter.setOnRemoveComment(this);
+                    } else {
+                        Log.d(TAG, "loadComments: " + task.getException());
 
+                    }
+                });
+
+    }
+
+    private void setUpCommentViews(List<Comment> commentList) {
         RecyclerView commentsView = binding.ratingsReviewsContainer.commentsView;
         commentsView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        CommentItemAdapter adapter = new CommentItemAdapter(getContext(), commentList, getLayoutInflater());
-        commentsView.setAdapter(adapter);
+        commentItemAdapter = new CommentItemAdapter(getContext(), commentList, getLayoutInflater());
+        commentsView.setAdapter(commentItemAdapter);
     }
 
     private Map<Integer, Object> addProductToBag(MainViewModel mainViewModel) {
@@ -186,5 +243,28 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
 
         binding.qualityCounter.setText(String.valueOf(count));
         return;
+    }
+
+    @Override
+    public void removeComment(int position) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        int productId = AppCacheManage.products.get(index).getId();
+
+        FirebaseDatabase
+                .getInstance()
+                .getReference("comments")
+                .child(String.valueOf(productId))
+                .child(uid)
+                .setValue(null)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        commentItemAdapter.removeComment(position);
+                        Toast.makeText(mainActivity, "Your comment was removed!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d(TAG, "removeComment: err " + task.getException());
+                    }
+                });
+
+
     }
 }

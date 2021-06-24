@@ -53,4 +53,22 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:strokeColor">@color/black</item>
     </style>
+
+
+    <style name="Widget.App.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="iconTint">@android:color/holo_red_light</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:scaleX">1.5</item>
+        <item name="android:scaleY">1.5</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:minWidth">50dp</item>
+        <item name="android:minHeight">50dp</item>
+    </style>
+
+    <!--    <style name="Widget.App.Button.OutlinedButton.IconOnly.Red" parent="Widget.App.Button.OutlinedButton.IconOnly">-->
+    <!--        <item name="iconTint">@android:color/holo_red_light</item>-->
+    <!--    </style>-->
 </resources>

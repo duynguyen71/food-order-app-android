@@ -66,5 +66,10 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
 
+    //like buttons factory
+    compileOnly 'com.github.jd-alexander:LikeButton:0.2.3'
+
+
+
 
 }

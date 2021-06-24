@@ -111,14 +111,16 @@ public class MainActivity extends AppCompatActivity {
                 .document(FirebaseAuth.getInstance().getUid())
                 .addSnapshotListener((value, error) -> {
                     Map<String, Object> data = value.getData();
-                    User user = null;
+                    User user;
                     if (value.exists() && data != null) {
                         user = new User();
                         user.setAddress((String) data.get("address"));
                         user.setPhoneNumber((String) data.get("phone"));
+                        viewModel.getUser().setValue(user);
+                    }else{
+                        viewModel.getUser().setValue(new User());
                     }
-                    Log.d(TAG, "getUserInfo: " + user.toString());
-                    viewModel.getUser().setValue(user);
+
                 });
         return null;
     }

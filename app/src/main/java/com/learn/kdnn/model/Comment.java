@@ -1,5 +1,7 @@
 package com.learn.kdnn.model;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +13,10 @@ import lombok.Setter;
 @Getter
 public class Comment {
 
-    private int id;
-    private User user;
+    private long id;
+    private String username;
+    private String userId;
     private String commentText;
+    private Date date;
 
 }
