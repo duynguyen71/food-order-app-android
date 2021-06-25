@@ -7,10 +7,11 @@ import java.util.Set;
 
 public class AppUtils {
 
-    public static double getTotalSalesPrice(Map<Integer,Object> bag){
+
+    public static double getTotalSalesPrice(Map<Long,Object> bag){
         double rs = 0;
-        Set<Integer> keys = bag.keySet();
-        for (Integer key :
+        Set<Long> keys = bag.keySet();
+        for (Long key :
                 keys) {
             CartItem item = (CartItem)bag.get(key);
             int quality = item.getQuality();
@@ -21,10 +22,10 @@ public class AppUtils {
         }
         return rs;
     }
-    public static double getDefailtPrice(Map<Integer, Object> bag) {
+    public static double getDefailtPrice(Map<Long, Object> bag) {
         double rs = 0;
-        Set<Integer> keys = bag.keySet();
-        for (Integer key :
+        Set<Long> keys = bag.keySet();
+        for (Long key :
                 keys) {
             CartItem item = (CartItem)bag.get(key);
             int quality = item.getQuality();

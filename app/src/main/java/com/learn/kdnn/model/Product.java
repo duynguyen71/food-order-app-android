@@ -1,5 +1,7 @@
 package com.learn.kdnn.model;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +15,11 @@ import lombok.ToString;
 @ToString
 public class Product {
 
-    private int id;
+    private long id;
     private String name;
     private double price;
     private double discountPer;
     private String category;
     private String primaryImgUrl;
-    private String[] thumbnailImgUrl;
+    private List<String> thumbnailImgUrl;
 }

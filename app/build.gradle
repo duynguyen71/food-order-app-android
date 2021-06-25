@@ -66,9 +66,9 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
 
-    //like buttons factory
-    compileOnly 'com.github.jd-alexander:LikeButton:0.2.3'
 
+    //google sign in
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
 
 

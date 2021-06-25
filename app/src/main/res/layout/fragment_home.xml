@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:background="@android:color/holo_orange_dark"
             android:elevation="4dp"
             android:gravity="center"
             android:orientation="horizontal"
@@ -35,7 +36,7 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-condensed"
                 android:text="100 RESULTS"
-                android:textColor="@color/black" />
+                android:textColor="@color/white" />
 
             <ImageButton
                 android:id="@+id/gridView"
@@ -44,7 +45,7 @@
                 android:layout_marginHorizontal="20dp"
                 android:background="@null"
                 android:src="@drawable/ic_baseline_view_module_24"
-                app:tint="@color/black" />
+                app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/btnFiilter"
@@ -52,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:src="@drawable/ic_baseline_filter_alt_24"
-                app:tint="@color/black" />
+                app:tint="@color/white" />
 
             <Spinner
                 android:id="@+id/spinner"
@@ -70,10 +71,25 @@
         android:id="@+id/products"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:itemCount="10"
         tools:listitem="@layout/product_entry" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/productLoader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="#FF6D00"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
-        binding.closeLogin.setOnClickListener(v->{
+        binding.closeLogin.setOnClickListener(v -> {
             startMainActivity();
         });
         setContentView(binding.getRoot());
@@ -82,10 +82,10 @@ public class LoginActivity extends AppCompatActivity {
     private void hideKeyBoard() {
         InputMethodManager manager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
         View focus = getCurrentFocus();
-        if(focus==null){
+        if (focus == null) {
             return;
         }
-        manager.hideSoftInputFromWindow(focus.getWindowToken(),0);
+        manager.hideSoftInputFromWindow(focus.getWindowToken(), 0);
     }
 
     private void startMainActivity() {

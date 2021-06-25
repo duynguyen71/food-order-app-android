@@ -21,11 +21,11 @@ public class BagItemOptionsFragment extends BottomSheetDialogFragment implements
     private FragmentBagItemOptionsBinding binding;
     private MainViewModel mainViewModel;
     public static final String PRODUCT_ID = "productID";
-    private int productId;
+    private long productId;
 
-    public BagItemOptionsFragment(int productId) {
+    public BagItemOptionsFragment(long productId) {
         Bundle bundle = new Bundle();
-        bundle.putInt(PRODUCT_ID, productId);
+        bundle.putLong(PRODUCT_ID, productId);
         setArguments(bundle);
     }
 
@@ -62,7 +62,7 @@ public class BagItemOptionsFragment extends BottomSheetDialogFragment implements
         switch (v.getId()) {
 
             case R.id.removeFromBag: {
-                HashMap<Integer, Object> items = mainViewModel.getBag().getValue();
+                HashMap<Long, Object> items = mainViewModel.getBag().getValue();
                 items.remove(this.productId);
                 mainViewModel.getBag().setValue(items);
                 this.dismiss();

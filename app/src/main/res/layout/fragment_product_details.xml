@@ -45,7 +45,7 @@
 
 
                 <TextView
-                    android:id="@+id/textView13"
+                    android:id="@+id/discountTag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -55,6 +55,7 @@
                     android:padding="8dp"
                     android:text="-50%"
                     android:textColor="@color/white"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/primaryImg"
                     app:layout_constraintStart_toStartOf="@+id/primaryImg" />
 
@@ -117,7 +118,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TextView"
-                        android:textColor="@color/design_default_color_error" />
+                        android:textColor="@color/design_default_color_error"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/standardPrice"
@@ -125,7 +127,9 @@
                         android:layout_height="wrap_content"
                         android:padding="5dp"
                         android:text="TextView"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/category"
@@ -134,7 +138,8 @@
                         android:layout_weight="1"
                         android:text="TextView"
                         android:textAlignment="center"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -163,6 +168,7 @@
                     android:layout_weight="1"
                     android:text="Quality"
                     android:textColor="@color/black"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -191,7 +197,8 @@
                         android:paddingLeft="20dp"
                         android:paddingRight="20dp"
                         android:text="1"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
 
                     <ImageButton
                         android:id="@+id/btn_plus"
@@ -227,22 +234,23 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
+                    android:paddingTop="13dp"
+                    android:paddingBottom="13dp"
                     android:text="Add to bag"
-                    android:textColor="@color/black"
+                    android:textColor="@android:color/holo_orange_dark"
                     app:cornerRadius="0dp"
                     app:icon="@drawable/ic_add_shopping_cart_24"
                     app:iconGravity="end"
-                    app:iconTint="@color/black"
-                    app:strokeColor="@color/black" />
+                    app:iconTint="@android:color/holo_orange_dark"
+                    app:strokeColor="@android:color/holo_orange_dark"
+                    app:strokeWidth="1dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_buy_it_now"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
+                    android:paddingTop="13dp"
+                    android:paddingBottom="13dp"
                     android:text="Buy it now"
                     app:backgroundTint="@color/black"
                     app:cornerRadius="0dp"

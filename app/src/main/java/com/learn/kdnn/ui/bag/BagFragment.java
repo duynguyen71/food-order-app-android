@@ -41,7 +41,7 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentBagBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        if (viewModel.getBag().getValue().isEmpty()) {
+        if (viewModel.getBag().getValue() == null || viewModel.getBag().getValue().isEmpty()) {
             binding.checkoutContainer.setVisibility(View.GONE);
         }
 
@@ -50,42 +50,53 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         viewModel.getBag().observe(requireActivity(), bagMap -> {
-            if (bagMap != null) {
 
-                binding.checkoutContainer.setVisibility(View.VISIBLE);
+            if(bagMap!=null){
+
+                ((MainActivity) getContext()).updateBagCounter();
+                if(bagMap.size()<=0){
+
+                    binding.checkoutContainer.setVisibility(View.GONE);
+                }else{
+                    binding.checkoutContainer.setVisibility(View.VISIBLE);
+
+                }
 
                 binding.productInBag.setText(String.valueOf(bagMap.size()));
                 this.totalSalesPrice = AppUtils.getTotalSalesPrice(bagMap);
-                binding.bagTotal.setText("$"+String.format("%.2f", totalSalesPrice));
-                this.totalStandardPrice = AppUtils.getDefailtPrice(bagMap);
-                binding.tvTotalStandardPrice.setText("$"+String.format("%.2f", this.totalStandardPrice));
-                binding.tvTotalStandardPrice.setPaintFlags(   binding.tvTotalStandardPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                
+                binding.bagTotal.setText("$" + String.format("%.2f", totalSalesPrice));
 
+                boolean isDiscount = false;
                 List<CartItem> cart = new ArrayList<>();
-                Set<Integer> keys = bagMap.keySet();
-                for (Integer key :
+                Set<Long> keys = bagMap.keySet();
+                for (Long key :
                         keys) {
                     CartItem item = (CartItem) bagMap.get(key);
+                    if (item.getProduct().getDiscountPer() > 0) {
+                        isDiscount = true;
+                    }
                     cart.add(item);
                 }
+                if (isDiscount) {
+                    binding.tvTotalStandardPrice.setVisibility(View.VISIBLE);
+                    this.totalStandardPrice = AppUtils.getDefailtPrice(bagMap);
+                    binding.tvTotalStandardPrice.setText("$" + String.format("%.2f", this.totalStandardPrice));
+                    binding.tvTotalStandardPrice.setPaintFlags(binding.tvTotalStandardPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                }
+
+
                 BagItemViewAdapter adapter = new BagItemViewAdapter(cart, getContext());
                 adapter.setOnOptionsClickListener(this);
                 recyclerView.setAdapter(adapter);
-                if(bagMap.size()==0){
-                    binding.checkoutContainer.setVisibility(View.GONE);
-
-                }
-            }else{
-                binding.checkoutContainer.setVisibility(View.GONE);
             }
+
+
         });
 
-        //TODO:sleect shipping method
         binding.btnReturnHome.setOnClickListener(v -> ((MainActivity) getContext()).getMainNavController().navigate(R.id.action_nav_bag_to_nav_home));
         binding.btnCheckout.setOnClickListener(v -> {
             FragmentManager mana = ((MainActivity) getContext()).getSupportFragmentManager();
-                CheckoutFragment.newInstance(viewModel.getShippingMethod().getValue()).show(mana, "check out fragment");
+            CheckoutFragment.newInstance(viewModel.getShippingMethod().getValue()).show(mana, "check out fragment");
         });
         return binding.getRoot();
     }
@@ -95,7 +106,6 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
         super.onDestroyView();
         binding = null;
     }
-
 
 
     @Override

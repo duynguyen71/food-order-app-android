@@ -29,6 +29,8 @@ public class AccountViewModel extends ViewModel {
                             user.setAddress((String) data.get("address"));
                             user.setPhoneNumber((String) data.get("phone"));
                             userInfo.setValue(user);
+                        }else{
+                            userInfo.setValue(new User());
                         }
                     });
 

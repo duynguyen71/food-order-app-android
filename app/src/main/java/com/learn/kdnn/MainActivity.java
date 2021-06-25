@@ -29,8 +29,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.learn.kdnn.databinding.ActivityMainBinding;
-import com.learn.kdnn.model.User;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,30 +46,43 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-
-        if (!isInternetConected()) {
-            this.showConnectInternetDialog();
-        }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            getUserInfo();
-        }
-        //update bag counter
-        updateBagCounter(viewModel.getBag().getValue().size());
         setContentView(binding.getRoot());
+
+
+        updateBagCounter();
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
+        NavController navController = setUpDrawerLayout();
+
+        binding.appBarMain.shoppingCard.setOnClickListener(v -> navController.navigate(R.id.action_nav_home_to_nav_bag));
+
+        binding.appBarMain.accountCircle.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(this, binding.appBarMain.accountCircle);
+            popupMenu.inflate(R.menu.account_setting);
+            popupMenu.show();
+            boolean isLogged = FirebaseAuth.getInstance().getCurrentUser() == null;
+            if (isLogged) {
+                MenuItem logout = popupMenu.getMenu().getItem(2);
+                logout.setTitle("Login");
+            }
+            popupMenu.setOnMenuItemClickListener(item -> handleAccountPopupItemMenuClick(item));
+        });
+
+    }
+
+    @NotNull
+    private NavController setUpDrawerLayout() {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-//                ,R.id.nav_product_details
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_favorites)
                 .setDrawerLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -78,51 +93,9 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().hide();
             } else {
                 getSupportActionBar().show();
-
             }
         });
-
-        //view shopping cart
-        binding.appBarMain.shoppingCard.setOnClickListener(v -> navController.navigate(R.id.action_nav_home_to_nav_bag));
-        //acount setting
-        binding.appBarMain.accountCircle.setOnClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(this, binding.appBarMain.accountCircle);
-            popupMenu.inflate(R.menu.account_setting);
-            popupMenu.show();
-            boolean isLogged = FirebaseAuth.getInstance().getCurrentUser() == null;
-            if (isLogged) {
-                MenuItem logout = popupMenu.getMenu().getItem(2);
-                logout.setTitle("Login");
-            }
-            popupMenu.setOnMenuItemClickListener(item -> {
-                return handleAccountPopupItemMenuClick(item);
-            });
-        });
-
-
-//        showUpdateInfoDialog();
-
-    }
-
-    private User getUserInfo() {
-
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(FirebaseAuth.getInstance().getUid())
-                .addSnapshotListener((value, error) -> {
-                    Map<String, Object> data = value.getData();
-                    User user;
-                    if (value.exists() && data != null) {
-                        user = new User();
-                        user.setAddress((String) data.get("address"));
-                        user.setPhoneNumber((String) data.get("phone"));
-                        viewModel.getUser().setValue(user);
-                    }else{
-                        viewModel.getUser().setValue(new User());
-                    }
-
-                });
-        return null;
+        return navController;
     }
 
     private boolean handleAccountPopupItemMenuClick(MenuItem item) {
@@ -146,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     Intent i = new Intent(this, AccountActivity.class);
-                    i.putExtra(AccountActivity.ARG_VIEW_PAGER_POS,1);
+                    i.putExtra(AccountActivity.ARG_VIEW_PAGER_POS, 1);
                     startActivity(i);
                 } else {
                     startLoginActivity();
@@ -232,8 +205,12 @@ public class MainActivity extends AppCompatActivity {
         return Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
     }
 
-    public void updateBagCounter(int i) {
-        binding.appBarMain.countBagItem.setText(String.valueOf(i));
+    public void updateBagCounter() {
+        HashMap<Long, Object> value = viewModel.getBag().getValue();
+        if (value == null) {
+            return;
+        }
+        binding.appBarMain.countBagItem.setText(String.valueOf(value.size()));
     }
 
     @Override

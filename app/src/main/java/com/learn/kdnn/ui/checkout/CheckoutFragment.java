@@ -37,8 +37,6 @@ import java.util.UUID;
 
 public class CheckoutFragment extends BottomSheetDialogFragment {
 
-    private static final String ARG_STANDARD_PRICE = "ARG_TOTAL_STANDARD";
-    public static final String ARG_TOTAL_SALES = "ARG_TOTAL_SALES";
     public static final String ARG_SHIPPING_METHOD = "ARG_SHIPPING_METHOD";
     private FragmentCheckoutBinding binding;
     private final String TAG = getClass().getSimpleName();
@@ -74,9 +72,8 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         binding = FragmentCheckoutBinding.inflate(inflater, container, false);
-        View view = binding.getRoot();
 
-        HashMap<Integer, Object> bag = viewModel.getBag().getValue();
+        HashMap<Long, Object> bag = viewModel.getBag().getValue();
         totalSalePrice = AppUtils.getTotalSalesPrice(bag);
         binding.checkoutSalesPrice.setText("$" + totalSalePrice);
         totalStandardPrice = AppUtils.getDefailtPrice(bag);
@@ -96,18 +93,19 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
             this.dismiss();
         });
 
-        inflareListOfImage();
+        inFlartListOfImage();
 
 
-        binding.btnPlaceOrder.setOnClickListener(v -> {
-            handleOrderProcess();
-        });
+        binding.btnPlaceOrder.setOnClickListener(v -> handleOrderProcess());
 
-        return view;
+        return binding.getRoot();
     }
 
 
     private void handleOrderProcess() {
+
+        //TODO : get shipping method and address,phone if null show alert dialog. User can login or not
+
         String uid = FirebaseAuth.getInstance().getUid();
         Order order = new Order();
         order.setUserId(uid);
@@ -116,7 +114,7 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
         order.setTotalPrice(this.totalSalePrice);
         order.setTotalStandardPrice(this.totalStandardPrice);
 
-        Map<Integer, Object> o = (Map<Integer, Object>) viewModel.getBag().getValue();
+        Map<Long, Object> o = viewModel.getBag().getValue();
         List<CartItem> products = new ArrayList<>();
         o.values().forEach(product -> {
             CartItem pro = (CartItem) product;
@@ -134,21 +132,20 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
                 .child(order.getOrderId())
                 .setValue(order)
                 .addOnSuccessListener(success -> {
-                    Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+                    viewModel.getBag().setValue(new HashMap<>());
+                    Toast.makeText(getContext(), "Order Successful", Toast.LENGTH_SHORT).show();
                     this.dismiss();
-                })
-                .addOnFailureListener(e -> {
-
                 });
 
 
     }
 
-    private void inflareListOfImage() {
+    private void inFlartListOfImage() {
+
         ViewGroup vg = binding.checkoutImgGp;
-        HashMap<Integer, Object> map = viewModel.getBag().getValue();
-        Set<Integer> keys = map.keySet();
-        for (Integer key :
+        HashMap<Long, Object> map = viewModel.getBag().getValue();
+        Set<Long> keys = map.keySet();
+        for (Long key :
                 keys) {
             CartItem cartItem = (CartItem) map.get(key);
             ImageView imageView = (ImageView) LayoutInflater.from(getContext()).inflate(R.layout.checkout_img_entry, vg, false);

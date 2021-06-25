@@ -105,26 +105,26 @@ public class AccountMainFragment extends Fragment {
 
     }
 
-    public void handleUpdateUserInfo(String username, String address, String phone) {
+    public void handleUpdateUserInfo(String iusername, String iaddress, String iphone) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         Map<String, Object> userMap = new HashMap<>();
-        //username
-        if (username.length() > 0 && !username.trim().equals(currentUser.getDisplayName())) {
+        //iusername
+        if (iusername.length() > 0 && !iusername.trim().equals(currentUser.getDisplayName())) {
             //update
-            updateUsername(username);
+            updateUsername(iusername);
         } else {
             binding.etUsername.setText(currentUser.getDisplayName());
         }
-        //address and phone
-        if (address.length() > 0 && !address.equals(viewModel.getUserInfo().getValue().getAddress())) {
-            userMap.put("address", address);
+        //iaddress and iphone
+        if (iaddress.length() > 0 && !iaddress.equals(viewModel.getUserInfo().getValue().getAddress())) {
+            userMap.put("address", iaddress);
         } else {
             binding.etAddress.setText(viewModel.getUserInfo().getValue().getAddress());
         }
 
-        if (phone.length() > 0 && !phone.equals(viewModel.getUserInfo().getValue().getPhoneNumber())) {
-            userMap.put("phone", phone);
+        if (iphone.length() > 0 && !iphone.equals(viewModel.getUserInfo().getValue().getPhoneNumber())) {
+            userMap.put("phone", iphone);
         } else {
             binding.etPhone.setText(viewModel.getUserInfo().getValue().getPhoneNumber());
         }

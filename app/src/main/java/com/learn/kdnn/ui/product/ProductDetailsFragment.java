@@ -1,6 +1,9 @@
 package com.learn.kdnn.ui.product;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -24,7 +27,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
-import com.learn.kdnn.AppCacheManage;
+import com.learn.kdnn.LoginActivity;
 import com.learn.kdnn.MainActivity;
 import com.learn.kdnn.MainViewModel;
 import com.learn.kdnn.R;
@@ -45,82 +48,98 @@ import java.util.Map;
 
 public class ProductDetailsFragment extends Fragment implements View.OnClickListener, CommentItemAdapter.OnRemoveComment {
 
-    public static final String PRODUCT_INDEX = "index";
+    public static final String PRODUCT_ID = "id";
     private static final String TAG = ProductDetailsFragment.class.getSimpleName();
 
     private FragmentProductDetailsBinding binding;
-    private MainActivity mainActivity;
-    private int index;
-
+    private long id;
+    private MainViewModel mainViewModel;
+    private Product product;
     private CommentItemAdapter commentItemAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            index = getArguments().getInt(PRODUCT_INDEX);
+            id = getArguments().getLong(PRODUCT_ID);
         }
+
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+
+        List<Product> products = mainViewModel.getProducts();
+        for (int i = 0; i < products.size(); i++) {
+            Product p = products.get(i);
+            if (p.getId() == id) {
+                product = p;
+                break;
+            }
+
+        }
+        Log.d(TAG, "onCreate: " + product);
     }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentProductDetailsBinding.inflate(inflater, container, false);
+
+
         TextInputEditText etComment = binding.ratingsReviewsContainer.etComment;
-        etComment.setOnClickListener(v-> etComment.setFocusable(true));
+        etComment.setOnClickListener(v -> etComment.setFocusable(true));
 
         loadComments();
 
-        mainActivity = (MainActivity) getContext();
-        MainViewModel mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-
-        Product product = AppCacheManage.products.get(index);
 
         double salesPrice = product.getPrice();
         double temp;
         if (product.getDiscountPer() > 0) {
+
             salesPrice = product.getPrice();
             temp = salesPrice;
 
             TextView tvStandardPrice = binding.standardPrice;
+            binding.standardPrice.setVisibility(View.VISIBLE);
             tvStandardPrice.setText("$" + String.format("%.2f", temp));
             tvStandardPrice.setPaintFlags(tvStandardPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             salesPrice = salesPrice - salesPrice * (product.getDiscountPer() / 100);
+
+            binding.discountTag.setVisibility(View.VISIBLE);
+            binding.discountTag.setText("-" + product.getDiscountPer() + "%");
+
         }
         binding.name.setText(product.getName());
 
         binding.salesPrice.setText("$" + String.format("%.2f", salesPrice));
-
         binding.category.setText(product.getCategory());
 
         Glide.with(getContext()).load(product.getPrimaryImgUrl())
                 .centerCrop()
                 .into(binding.primaryImg);
 
-        ViewGroup viewGroup = (ViewGroup) binding.thumbImgViewGroup;
-        for (int i = 0; i < 7; i++) {
-            ImageView iv = (ImageView) LayoutInflater.from(getContext()).inflate(R.layout.img_thumb_entry, viewGroup, false);
-            Glide.with(getContext())
-                    .load(product.getPrimaryImgUrl())
-                    .centerCrop()
-                    .into(iv);
 
-            viewGroup.addView(iv);
-
-
+        if(product.getThumbnailImgUrl()!=null&&!product.getThumbnailImgUrl().isEmpty()){
+            ViewGroup viewGroup = (ViewGroup) binding.thumbImgViewGroup;
+            for (int i = 0; i < product.getThumbnailImgUrl().size(); i++) {
+                String url = product.getThumbnailImgUrl().get(i);
+                ImageView iv = (ImageView) LayoutInflater.from(getContext()).inflate(R.layout.img_thumb_entry, viewGroup, false);
+                Glide.with(getContext())
+                        .load(Uri.parse(url))
+                        .centerCrop()
+                        .into(iv);
+                viewGroup.addView(iv);
+            }
         }
-        binding.close.setOnClickListener(v -> mainActivity.getMainNavController().navigate(R.id.action_nav_product_details_to_nav_home));
 
 
+
+        binding.close.setOnClickListener(v -> ((MainActivity) getContext()).getMainNavController().navigate(R.id.action_nav_product_details_to_nav_home));
         binding.btnMinus.setOnClickListener(this);
         binding.btnPlus.setOnClickListener(this);
         //add to bag
         binding.btnAddToBag.setOnClickListener(v -> {
-            Map<Integer, Object> items = addProductToBag(mainViewModel);
-            ((MainActivity) getContext()).updateBagCounter(items.size());
+            addProductToBag(mainViewModel);
+            ((MainActivity) getContext()).updateBagCounter();
         });
-
-
 
 
         setUpWriteComment();
@@ -141,7 +160,16 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
             }
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser == null) {
-                //TODO:alert dialog
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Please login before comment")
+                        .setPositiveButton("Login", ((dialog, which) -> {
+                            Intent i = new Intent(getContext(), LoginActivity.class);
+                            startActivity(i);
+                        }))
+                        .setNegativeButton("Cancel", ((dialog, which) -> {
+                            dialog.dismiss();
+                        }))
+                        .show();
                 return;
             }
             String displayName = currentUser.getDisplayName();
@@ -149,20 +177,21 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
                 displayName = currentUser.getEmail();
             }
             Comment comment = new Comment(new Date().getTime(), displayName, currentUser.getUid(), text.toString(), new Date());
-            int productId = AppCacheManage.products.get(index).getId();
+
+
             FirebaseDatabase
                     .getInstance()
                     .getReference("comments")
-                    .child(String.valueOf(productId))
+                    .child(String.valueOf(product.getId()))
                     .child(currentUser.getUid())
                     .setValue(comment)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             commentItemAdapter.addComment(comment);
                             etComment.setText(null);
-                            Toast.makeText(mainActivity, "Your comment has been published", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Your comment has been published", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(mainActivity, "err", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "err", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -172,7 +201,7 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
 
     private void loadComments() {
 
-        Product product = AppCacheManage.products.get(index);
+
         FirebaseDatabase.getInstance()
                 .getReference("comments")
                 .child(String.valueOf(product.getId()))
@@ -201,20 +230,20 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
         commentsView.setAdapter(commentItemAdapter);
     }
 
-    private Map<Integer, Object> addProductToBag(MainViewModel mainViewModel) {
-        HashMap<Integer, Object> bag = mainViewModel.getBag().getValue();
+    private Map<Long, Object> addProductToBag(MainViewModel mainViewModel) {
+        HashMap<Long, Object> bag = mainViewModel.getBag().getValue();
         if (bag == null) {
             bag = new HashMap<>();
             mainViewModel.getBag().setValue(bag);
         }
         int quality = Integer.parseInt(binding.qualityCounter.getText().toString());
 
-        Product p = AppCacheManage.products.get(this.index);
-        bag.put(p.getId(), new CartItem(p, quality));
 
-        FragmentManager manager = mainActivity.getSupportFragmentManager();
+        bag.put(product.getId(), new CartItem(product, quality));
 
-        ViewAddedItemBottomSheet.newInstance(this.index, quality)
+        FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
+
+        ViewAddedItemBottomSheet.newInstance(product.getId(), quality)
                 .show(manager, "view add to bag item");
         return bag;
     }
@@ -242,24 +271,22 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
         }
 
         binding.qualityCounter.setText(String.valueOf(count));
-        return;
     }
 
     @Override
     public void removeComment(int position) {
         String uid = FirebaseAuth.getInstance().getUid();
-        int productId = AppCacheManage.products.get(index).getId();
 
         FirebaseDatabase
                 .getInstance()
                 .getReference("comments")
-                .child(String.valueOf(productId))
+                .child(String.valueOf(product.getId()))
                 .child(uid)
                 .setValue(null)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         commentItemAdapter.removeComment(position);
-                        Toast.makeText(mainActivity, "Your comment was removed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Your comment was removed!", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.d(TAG, "removeComment: err " + task.getException());
                     }

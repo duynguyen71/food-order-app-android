@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestFutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.learn.kdnn.R;
@@ -28,15 +29,18 @@ import com.learn.kdnn.model.Product;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Setter;
 
 
-public class HomeItemViewAdapter extends RecyclerView.Adapter<HomeItemViewAdapter.MyViewHolder> {
+public class HomeItemViewAdapter extends RecyclerView.Adapter<HomeItemViewAdapter.MyViewHolder>  {
 
+    @Setter
     private List<Product> products;
     private Context context;
+
 
     @Setter
     private boolean isUsingListView;
@@ -74,12 +78,12 @@ public class HomeItemViewAdapter extends RecyclerView.Adapter<HomeItemViewAdapte
             //standard price
             TextView tvStandardPrice = holder.tvStandardPrice;
             tvStandardPrice.setVisibility(View.VISIBLE);
-            tvStandardPrice.setText("$" +  String.format("%.2f",temp));
+            tvStandardPrice.setText("$" + String.format("%.2f", temp));
             tvStandardPrice.setPaintFlags(tvStandardPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             //sales price
             salesPrice = salesPrice - salesPrice * (product.getDiscountPer() / 100);
         }
-        holder.tvPrice.setText("$" + String.format("%.2f",salesPrice));
+        holder.tvPrice.setText("$" + String.format("%.2f", salesPrice));
 
 
         Glide.with(context)
@@ -134,6 +138,13 @@ public class HomeItemViewAdapter extends RecyclerView.Adapter<HomeItemViewAdapte
         return 0;
     }
 
+
+    public void filteredList(List<Product> filteredList){
+        products = filteredList;
+        notifyDataSetChanged();
+    }
+
+
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvPrice, tvDiscountPer, tvStandardPrice, category;
         AppCompatImageView productImage;
@@ -141,6 +152,7 @@ public class HomeItemViewAdapter extends RecyclerView.Adapter<HomeItemViewAdapte
         public MyViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.productName);
+            tvName.setSelected(true);
             tvPrice = itemView.findViewById(R.id.productPrice);
             productImage = itemView.findViewById(R.id.productPrimaryImage);
             tvDiscountPer = itemView.findViewById(R.id.dicountPer);

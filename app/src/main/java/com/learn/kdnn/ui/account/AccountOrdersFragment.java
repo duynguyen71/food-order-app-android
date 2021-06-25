@@ -40,6 +40,7 @@ public class AccountOrdersFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentAccountOrdersBinding.inflate(inflater, container, false);
 
+        binding.orderLoader.setVisibility(View.VISIBLE);
         FirebaseDatabase
                 .getInstance()
                 .getReference("orders")
@@ -52,10 +53,9 @@ public class AccountOrdersFragment extends Fragment {
                         rs.getChildren().forEach(snapshot -> {
                             orderList.add((Order) snapshot.getValue(Order.class));
                         });
-
                         setUpRecyclerView(orderList);
-                        Log.d("TAG", "onCreateView: " + orderList.toString());
                     }
+                    binding.orderLoader.setVisibility(View.GONE);
                 });
 
 
@@ -63,11 +63,10 @@ public class AccountOrdersFragment extends Fragment {
     }
 
     void setUpRecyclerView(List<Order> orderList) {
-
         RecyclerView rcv = binding.rcvAccountOrders;
+        rcv.setHasFixedSize(true);
         rcv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, reverseLayout));
         OrderItemAdapter adapter = new OrderItemAdapter(orderList, getContext());
         rcv.setAdapter(adapter);
-
     }
 }
