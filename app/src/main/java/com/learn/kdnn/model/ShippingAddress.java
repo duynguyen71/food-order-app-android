@@ -17,5 +17,4 @@ public class ShippingAddress {
     private String address;
     private String phone;
 
-
 }

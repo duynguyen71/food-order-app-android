@@ -35,32 +35,29 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
 
     private double totalSalesPrice;
     private double totalStandardPrice;
+    private MainActivity mainActivity;
+
+    @Override
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        mainActivity = ((MainActivity) getContext());
+
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentBagBinding.inflate(inflater, container, false);
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        if (viewModel.getBag().getValue() == null || viewModel.getBag().getValue().isEmpty()) {
-            binding.checkoutContainer.setVisibility(View.GONE);
-        }
-
 
         RecyclerView recyclerView = binding.rcvBag;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         viewModel.getBag().observe(requireActivity(), bagMap -> {
 
-            if(bagMap!=null){
+            if (bagMap != null) {
 
-                ((MainActivity) getContext()).updateBagCounter();
-                if(bagMap.size()<=0){
-
-                    binding.checkoutContainer.setVisibility(View.GONE);
-                }else{
-                    binding.checkoutContainer.setVisibility(View.VISIBLE);
-
-                }
+                mainActivity.updateBagCounter();
 
                 binding.productInBag.setText(String.valueOf(bagMap.size()));
                 this.totalSalesPrice = AppUtils.getTotalSalesPrice(bagMap);
@@ -95,16 +92,13 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
 
         binding.btnReturnHome.setOnClickListener(v -> ((MainActivity) getContext()).getMainNavController().navigate(R.id.action_nav_bag_to_nav_home));
         binding.btnCheckout.setOnClickListener(v -> {
-            FragmentManager mana = ((MainActivity) getContext()).getSupportFragmentManager();
-            CheckoutFragment.newInstance(viewModel.getShippingMethod().getValue()).show(mana, "check out fragment");
+            if(viewModel.getBag()!=null &&!viewModel.getBag().getValue().isEmpty()){
+                FragmentManager mana = ((MainActivity) getContext()).getSupportFragmentManager();
+                CheckoutFragment.newInstance(viewModel.getShippingMethod().getValue()).show(mana, "check out fragment");
+            }
         });
-        return binding.getRoot();
-    }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        return binding.getRoot();
     }
 
 
@@ -113,4 +107,6 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
         FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
         new BagItemOptionsFragment(product.getId()).show(manager, "bag item options fragment");
     }
+
+
 }

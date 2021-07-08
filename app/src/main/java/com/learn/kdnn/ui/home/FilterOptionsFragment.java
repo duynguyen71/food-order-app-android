@@ -4,10 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.learn.kdnn.R;
 import com.learn.kdnn.databinding.FragmentFilterOptionsBinding;
 
 public class FilterOptionsFragment extends BottomSheetDialogFragment {
@@ -17,6 +15,10 @@ public class FilterOptionsFragment extends BottomSheetDialogFragment {
     public FilterOptionsFragment() {
     }
 
+    public static FilterOptionsFragment newInstance() {
+        FilterOptionsFragment fragment = new FilterOptionsFragment();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

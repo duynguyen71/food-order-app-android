@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -48,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 
         updateBagCounter();
 
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     Intent i = new Intent(this, AccountActivity.class);
                     startActivity(i);
+                    finish();
                 } else {
                     startLoginActivity();
                 }
@@ -121,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent i = new Intent(this, AccountActivity.class);
                     i.putExtra(AccountActivity.ARG_VIEW_PAGER_POS, 1);
                     startActivity(i);
+                    finish();
                 } else {
                     startLoginActivity();
                 }
@@ -206,10 +209,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateBagCounter() {
-        HashMap<Long, Object> value = viewModel.getBag().getValue();
-        if (value == null) {
+        MutableLiveData<HashMap<Long, Object>> bag = viewModel.getBag();
+        if (bag == null) {
             return;
         }
+        HashMap<Long, Object> value = bag.getValue();
         binding.appBarMain.countBagItem.setText(String.valueOf(value.size()));
     }
 
@@ -218,4 +222,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "HIHIH", Toast.LENGTH_SHORT).show();
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

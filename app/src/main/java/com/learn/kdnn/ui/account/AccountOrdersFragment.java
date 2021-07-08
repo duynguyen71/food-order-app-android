@@ -1,7 +1,6 @@
 package com.learn.kdnn.ui.account;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.learn.kdnn.databinding.FragmentAccountOrdersBinding;
+import com.learn.kdnn.model.CartItem;
 import com.learn.kdnn.model.Order;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,6 @@ public class AccountOrdersFragment extends Fragment {
 
     private FragmentAccountOrdersBinding binding;
 
-    private boolean reverseLayout = false;
 
     public AccountOrdersFragment() {
     }
@@ -36,37 +36,35 @@ public class AccountOrdersFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAccountOrdersBinding.inflate(inflater, container, false);
 
         binding.orderLoader.setVisibility(View.VISIBLE);
+
+        RecyclerView rcv = binding.rcvAccountOrders;
+        rcv.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
+        rcv.setHasFixedSize(true);
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase
                 .getInstance()
                 .getReference("orders")
-                .child(FirebaseAuth.getInstance().getUid())
+                .child(uid)
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DataSnapshot rs = task.getResult();
+                    if(task.isSuccessful()&&task.getResult().exists()){
                         List<Order> orderList = new ArrayList<>();
-                        rs.getChildren().forEach(snapshot -> {
-                            orderList.add((Order) snapshot.getValue(Order.class));
+                        task.getResult().getChildren().forEach(item->{
+                            orderList.add((Order) item.getValue(Order.class));
                         });
-                        setUpRecyclerView(orderList);
+                        OrderItemAdapter adapter = new OrderItemAdapter(orderList,getContext());
+                        rcv.setAdapter(adapter);
+                        binding.orderLoader.setVisibility(View.GONE);
+
                     }
-                    binding.orderLoader.setVisibility(View.GONE);
                 });
-
-
         return binding.getRoot();
     }
 
-    void setUpRecyclerView(List<Order> orderList) {
-        RecyclerView rcv = binding.rcvAccountOrders;
-        rcv.setHasFixedSize(true);
-        rcv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, reverseLayout));
-        OrderItemAdapter adapter = new OrderItemAdapter(orderList, getContext());
-        rcv.setAdapter(adapter);
-    }
 }

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.learn.kdnn.R;
+import com.learn.kdnn.model.CartItem;
 import com.learn.kdnn.model.Order;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,16 +46,21 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.MyVi
         String stringDate = dateFormat.format(order.getOrderDate());
         holder.tvOrderDate.setText(stringDate);
 
-        StringBuffer buffer = new StringBuffer("");
-        order.getCartItems().forEach(cartItem -> {
-            String name = cartItem.getProduct().getName();
-            int qty = cartItem.getQuality();
-            buffer.append(name);
-            buffer.append(" (" + qty + ") ");
-            buffer.append(" - ");
-        });
-        TextView tvDetails = holder.tvDetails;
-        tvDetails.setText(buffer);
+        if(order.getCartItems()!=null &&!order.getCartItems().isEmpty())
+        {
+            for (int i = 0; i < order.getCartItems().size(); i++) {
+                CartItem cartItem = order.getCartItems().get(i);
+                StringBuffer buffer = new StringBuffer("");
+                String name = cartItem.getProduct().getName();
+                int qty = cartItem.getQuality();
+                buffer.append(name);
+                buffer.append(" (" + qty + ") ");
+                buffer.append(" - ");
+                TextView tvDetails = holder.tvDetails;
+                tvDetails.setText(buffer);
+            }
+
+        }
 
         holder.tvTotalPrice.setText("$" + order.getTotalPrice());
     }

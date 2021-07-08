@@ -16,4 +16,9 @@
     <string name="tab_text_1">Account</string>
     <string name="tab_text_2">Orders</string>
     <string name="tab_text_3">Settings</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="gg_client_id">247677956138-tinki2ksvdsduf1n5c4j8c6ificclj1n.apps.googleusercontent.com</string>
+    <string name="gg_client_secret">IeIycS1GwGavqQN7VeBr9dHU</string>
+
 </resources>

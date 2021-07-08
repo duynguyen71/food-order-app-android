@@ -38,6 +38,7 @@ public class AccountActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         com.learn.kdnn.databinding.ActivityAccountBinding binding = ActivityAccountBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         new ViewModelProvider(this).get(AccountViewModel.class);
         ViewPager viewPager = setUpViewPager(binding);
 

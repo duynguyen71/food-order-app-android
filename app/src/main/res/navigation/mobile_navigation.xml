@@ -50,5 +50,8 @@
         <action
             android:id="@+id/action_nav_bag_to_nav_home"
             app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_bag_to_nav_product_details"
+            app:destination="@id/nav_product_details" />
     </fragment>
 </navigation>

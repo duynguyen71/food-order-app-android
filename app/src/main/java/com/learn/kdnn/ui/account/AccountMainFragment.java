@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.learn.kdnn.AccountActivity;
 import com.learn.kdnn.databinding.FragmentAccountMainBinding;
-import com.learn.kdnn.utils.MyUiUtil;
+import com.learn.kdnn.utils.ApplicationUiUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,13 +57,16 @@ public class AccountMainFragment extends Fragment {
         binding = FragmentAccountMainBinding.inflate(inflater, container, false);
         registerListenerViewModel();
 
+
+
+
         binding.usernameLayout.setEndIconOnClickListener(v -> {
             binding.etUsername.setEnabled(true);
             binding.etUsername.requestFocus();
             if (binding.etUsername.getText() != null) {
                 binding.etUsername.setSelection(binding.etUsername.getText().toString().length());
             }
-            MyUiUtil.showSoftInput(accountActivity, binding.etUsername);
+            ApplicationUiUtils.showSoftInput(accountActivity, binding.etUsername);
 
         });
 
@@ -74,7 +77,7 @@ public class AccountMainFragment extends Fragment {
             if (binding.etAddress.getText() != null) {
                 binding.etAddress.setSelection(binding.etAddress.getText().toString().length());
             }
-            MyUiUtil.showSoftInput(accountActivity, binding.etAddress);
+            ApplicationUiUtils.showSoftInput(accountActivity, binding.etAddress);
 
         });
 
@@ -84,11 +87,13 @@ public class AccountMainFragment extends Fragment {
             if (binding.etPhone.getText() != null) {
                 binding.etPhone.setSelection(binding.etPhone.getText().toString().length());
             }
-            MyUiUtil.showSoftInput(accountActivity, binding.etPhone);
+            ApplicationUiUtils.showSoftInput(accountActivity, binding.etPhone);
 
         });
 
         binding.btnUpdate.setOnClickListener(v -> handleUpdateUserInfo(binding.etUsername.getText().toString().trim(), binding.etAddress.getText().toString().trim(), binding.etPhone.getText().toString().trim()));
+
+
         return binding.getRoot();
     }
 

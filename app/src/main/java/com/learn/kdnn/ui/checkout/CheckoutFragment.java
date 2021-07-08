@@ -1,5 +1,7 @@
 package com.learn.kdnn.ui.checkout;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +11,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +28,7 @@ import com.learn.kdnn.model.CartItem;
 import com.learn.kdnn.model.Order;
 import com.learn.kdnn.model.ShippingAddress;
 import com.learn.kdnn.utils.AppUtils;
+import com.learn.kdnn.utils.ApplicationUiUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -68,26 +73,32 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
 
     }
 
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         binding = FragmentCheckoutBinding.inflate(inflater, container, false);
 
-        HashMap<Long, Object> bag = viewModel.getBag().getValue();
-        totalSalePrice = AppUtils.getTotalSalesPrice(bag);
-        binding.checkoutSalesPrice.setText("$" + totalSalePrice);
-        totalStandardPrice = AppUtils.getDefailtPrice(bag);
-        binding.checkoutStandardPrice.setText("$" + totalStandardPrice);
+        MutableLiveData<HashMap<Long, Object>> viewModelBag = viewModel.getBag();
+        HashMap<Long, Object> bag = viewModelBag.getValue();
+        if (bag != null && !bag.isEmpty()) {
+            totalSalePrice = AppUtils.getTotalSalesPrice(bag);
+            binding.checkoutSalesPrice.setText("$" + totalSalePrice);
+            totalStandardPrice = AppUtils.getDefailtPrice(bag);
+            binding.checkoutStandardPrice.setText("$" + totalStandardPrice);
+        }
+
         if (getArguments() != null) {
             if (method == 1) {
                 binding.selectShippingMethod.setText("COD");
             }
 
         }
+        MainActivity mainActivity = (MainActivity) getContext();
 
         binding.btnCloseCheckout.setOnClickListener(v -> this.dismiss());
         binding.selectShippingMethod.setOnClickListener(v -> {
-            MainActivity mainActivity = (MainActivity) getContext();
             FragmentManager manager = mainActivity.getSupportFragmentManager();
             new CheckoutMethodFragment().show(manager, "check out method");
             this.dismiss();
@@ -102,41 +113,50 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void handleOrderProcess() {
+        MutableLiveData<ShippingAddress> shippingDetail = viewModel.getShippingAdress();
+        ShippingAddress shippingDetailValue = shippingDetail.getValue();
+        if(shippingDetailValue==null||shippingDetailValue.getAddress()==null||shippingDetailValue.getPhone()==null||shippingDetailValue.getUsername()==null){
+            ApplicationUiUtils.showCustomToast(getContext(),Toast.LENGTH_LONG,"Please provide all info about shipping detail",getLayoutInflater());
+            return;
+        }
+        MutableLiveData<HashMap<Long, Object>> allItemInBag = viewModel.getBag();
+        Map<Long, Object> o = allItemInBag.getValue();
+        if (allItemInBag != null && allItemInBag.getValue() != null) {
+            String uid = FirebaseAuth.getInstance().getUid();
+            Order order = new Order();
+            order.setUserId(uid);
+            order.setOrderId(UUID.randomUUID().toString());
+            order.setOrderDate(new Date());
+            order.setTotalPrice(this.totalSalePrice);
+            order.setTotalStandardPrice(this.totalStandardPrice);
 
-        //TODO : get shipping method and address,phone if null show alert dialog. User can login or not
+            List<CartItem> products = new ArrayList<>();
+            o.values().forEach(product -> {
+                CartItem pro = (CartItem) product;
+                products.add(pro);
+            });
+            order.setCartItems(products);
 
-        String uid = FirebaseAuth.getInstance().getUid();
-        Order order = new Order();
-        order.setUserId(uid);
-        order.setOrderId(UUID.randomUUID().toString());
-        order.setOrderDate(new Date());
-        order.setTotalPrice(this.totalSalePrice);
-        order.setTotalStandardPrice(this.totalStandardPrice);
+            order.setShippingAddress(shippingDetailValue);
 
-        Map<Long, Object> o = viewModel.getBag().getValue();
-        List<CartItem> products = new ArrayList<>();
-        o.values().forEach(product -> {
-            CartItem pro = (CartItem) product;
-            products.add(pro);
-        });
-        order.setCartItems(products);
+            MainActivity mainActivity = ((MainActivity) getContext());
+            FirebaseDatabase
+                    .getInstance()
+                    .getReference("orders")
+                    .child(FirebaseAuth.getInstance().getUid())
+                    .child(order.getOrderId())
+                    .setValue(order)
+                    .addOnSuccessListener(success -> {
+                        allItemInBag.setValue(new HashMap<>());
+                        Toast.makeText(getContext(), "Order Successful", Toast.LENGTH_SHORT).show();
+                        this.dismiss();
+                        mainActivity.getMainNavController()
+                                .navigate(R.id.action_nav_bag_to_nav_home);
 
-        ShippingAddress shippingAddress = viewModel.getShippingAdress().getValue();
-        order.setShippingAddress(shippingAddress);
-
-        FirebaseDatabase
-                .getInstance()
-                .getReference("orders")
-                .child(FirebaseAuth.getInstance().getUid())
-                .child(order.getOrderId())
-                .setValue(order)
-                .addOnSuccessListener(success -> {
-                    viewModel.getBag().setValue(new HashMap<>());
-                    Toast.makeText(getContext(), "Order Successful", Toast.LENGTH_SHORT).show();
-                    this.dismiss();
-                });
-
+                    });
+        }
 
     }
 

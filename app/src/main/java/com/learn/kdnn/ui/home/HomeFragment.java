@@ -1,6 +1,7 @@
 package com.learn.kdnn.ui.home;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.MutableLiveData;
@@ -31,6 +34,7 @@ import com.learn.kdnn.R;
 import com.learn.kdnn.databinding.FragmentHomeBinding;
 import com.learn.kdnn.model.Product;
 import com.learn.kdnn.ui.product.ProductDetailsFragment;
+import com.learn.kdnn.utils.ApplicationUiUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,12 +46,13 @@ public class HomeFragment extends Fragment {
     private MainViewModel mainViewModel;
     private FragmentHomeBinding binding;
     private HomeItemViewAdapter homeItemViewAdapter;
+    private MainActivity mainActivity;
 
     @Override
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-
+        mainActivity = ((MainActivity) getContext());
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -72,6 +77,7 @@ public class HomeFragment extends Fragment {
                 .getInstance()
                 .getReference("products")
                 .addValueEventListener(new ValueEventListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -81,12 +87,11 @@ public class HomeFragment extends Fragment {
                                 Product prod = child.getValue(Product.class);
                                 productList.add(prod);
                             });
-                            binding.textView19.setText(productList.size() + " Products");
+                            binding.tv19.setText(productList.size() + " Products");
                             mainViewModel.setProducts(productList);
                             setUpRecyclerView(productList);
                         }
                         binding.productLoader.setVisibility(View.GONE);
-
                     }
 
                     @Override
@@ -98,6 +103,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+    @SuppressLint("SetTextI18n")
     public void filter(String text) {
         List<Product> allProduct = mainViewModel.getProducts();
         homeItemViewAdapter.setProducts(allProduct);
@@ -114,6 +120,8 @@ public class HomeFragment extends Fragment {
                 filteredList.add(product);
 
         }
+        ApplicationUiUtils.showCustomToast(getContext(), Toast.LENGTH_SHORT, "Found " + filteredList.size() + " results for " + text.toUpperCase(), getLayoutInflater());
+        binding.tv19.setText(filteredList.size() + " RESULTS");
         homeItemViewAdapter.filteredList(filteredList);
     }
 
@@ -192,7 +200,7 @@ public class HomeFragment extends Fragment {
 
     private void showFilterOptionsFragment() {
         FragmentManager manager = ((MainActivity) requireContext()).getSupportFragmentManager();
-        new FilterOptionsFragment().show(manager, "filter options fragment");
+        FilterOptionsFragment.newInstance().show(manager, "filter options fragment");
     }
 
     @Override

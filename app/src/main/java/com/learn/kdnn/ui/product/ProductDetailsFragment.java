@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -11,11 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,12 +28,16 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.learn.kdnn.LoginActivity;
 import com.learn.kdnn.MainActivity;
 import com.learn.kdnn.MainViewModel;
 import com.learn.kdnn.R;
 import com.learn.kdnn.databinding.FragmentProductDetailsBinding;
+import com.learn.kdnn.databinding.RaitingsAndReviewsBinding;
 import com.learn.kdnn.model.CartItem;
 import com.learn.kdnn.model.Comment;
 import com.learn.kdnn.model.Product;
@@ -56,6 +62,7 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
     private MainViewModel mainViewModel;
     private Product product;
     private CommentItemAdapter commentItemAdapter;
+    private RecyclerView commentsView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,15 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
 
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        binding = FragmentProductDetailsBinding.inflate(inflater, container, false);
+
         List<Product> products = mainViewModel.getProducts();
         for (int i = 0; i < products.size(); i++) {
             Product p = products.get(i);
@@ -75,19 +91,6 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
             }
 
         }
-        Log.d(TAG, "onCreate: " + product);
-    }
-
-    @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentProductDetailsBinding.inflate(inflater, container, false);
-
-
-        TextInputEditText etComment = binding.ratingsReviewsContainer.etComment;
-        etComment.setOnClickListener(v -> etComment.setFocusable(true));
-
-        loadComments();
 
 
         double salesPrice = product.getPrice();
@@ -117,7 +120,7 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
                 .into(binding.primaryImg);
 
 
-        if(product.getThumbnailImgUrl()!=null&&!product.getThumbnailImgUrl().isEmpty()){
+        if (product.getThumbnailImgUrl() != null && !product.getThumbnailImgUrl().isEmpty()) {
             ViewGroup viewGroup = (ViewGroup) binding.thumbImgViewGroup;
             for (int i = 0; i < product.getThumbnailImgUrl().size(); i++) {
                 String url = product.getThumbnailImgUrl().get(i);
@@ -128,8 +131,8 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
                         .into(iv);
                 viewGroup.addView(iv);
             }
+            binding.divider2.setVisibility(View.VISIBLE);
         }
-
 
 
         binding.close.setOnClickListener(v -> ((MainActivity) getContext()).getMainNavController().navigate(R.id.action_nav_product_details_to_nav_home));
@@ -142,19 +145,16 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
         });
 
 
-        setUpWriteComment();
 
 
-        return binding.getRoot();
-
-    }
-
-    private void setUpWriteComment() {
-        TextInputEditText etComment = binding.ratingsReviewsContainer.etComment;
-        Button btnSaveComment = binding.ratingsReviewsContainer.btnSaveComment;
-        btnSaveComment.setOnClickListener(v -> {
+        commentsView = binding.ratingsReviewsContainer.commentsView;
+        commentsView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        commentsView.setHasFixedSize(true);
+        setUpCommentView();
+        binding.ratingsReviewsContainer.btnSaveComment.setOnClickListener(v -> {
+            TextInputEditText etComment = binding.ratingsReviewsContainer.etComment;
             Editable text = etComment.getText();
-            if (text == null && TextUtils.isEmpty(text.toString())) {
+            if (text == null || TextUtils.isEmpty(text.toString())) {
                 etComment.setError("Your comment is blank!");
                 return;
             }
@@ -166,9 +166,7 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
                             Intent i = new Intent(getContext(), LoginActivity.class);
                             startActivity(i);
                         }))
-                        .setNegativeButton("Cancel", ((dialog, which) -> {
-                            dialog.dismiss();
-                        }))
+                        .setNegativeButton("Cancel", ((dialog, which) -> dialog.dismiss()))
                         .show();
                 return;
             }
@@ -187,47 +185,46 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
                     .setValue(comment)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            commentItemAdapter.addComment(comment);
                             etComment.setText(null);
-                            Toast.makeText(getContext(), "Your comment has been published", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getContext(), "err", Toast.LENGTH_SHORT).show();
                         }
                     });
 
 
         });
+
+        return binding.getRoot();
+
     }
 
-    private void loadComments() {
 
-
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void setUpCommentView() {
         FirebaseDatabase.getInstance()
                 .getReference("comments")
                 .child(String.valueOf(product.getId()))
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<Comment> comments = new ArrayList<>();
-                        task.getResult().getChildren().forEach(snapshot -> {
-                            Comment comment = (Comment) snapshot.getValue(Comment.class);
-                            comments.add(comment);
-                        });
-                        setUpCommentViews(comments);
-                        commentItemAdapter.setOnRemoveComment(this);
-                    } else {
-                        Log.d(TAG, "loadComments: " + task.getException());
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        if (snapshot.exists() && snapshot.getValue() != null) {
+                            List<Comment> commentList = new ArrayList<>();
+                            snapshot
+                                    .getChildren()
+                                    .forEach(item -> {
+                                        Comment cmt = item.getValue(Comment.class);
+                                        commentList.add(cmt);
+                                    });
+                            commentItemAdapter = new CommentItemAdapter(getContext(), commentList);
+                            commentsView.setAdapter(commentItemAdapter);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
                     }
                 });
 
-    }
 
-    private void setUpCommentViews(List<Comment> commentList) {
-        RecyclerView commentsView = binding.ratingsReviewsContainer.commentsView;
-        commentsView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        commentItemAdapter = new CommentItemAdapter(getContext(), commentList, getLayoutInflater());
-        commentsView.setAdapter(commentItemAdapter);
     }
 
     private Map<Long, Object> addProductToBag(MainViewModel mainViewModel) {
@@ -248,11 +245,6 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
         return bag;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        this.binding = null;
-    }
 
     @Override
     public void onClick(View v) {
@@ -294,4 +286,6 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
 
 
     }
+
+
 }

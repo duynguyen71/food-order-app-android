@@ -1,7 +1,5 @@
 package com.learn.kdnn;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -35,12 +33,11 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<ShippingAddress> shippingAdress;
 
     public MainViewModel() {
-        Log.d("CREATE", "MainViewModel: ");
-
         bag = new MutableLiveData<>();
         bag.setValue(new HashMap<>());
-
         user = new MutableLiveData<>();
+
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             FirebaseFirestore.getInstance()
                     .collection("users")
@@ -62,7 +59,6 @@ public class MainViewModel extends ViewModel {
         shippingMethod = new MutableLiveData<>();
         shippingMethod.setValue(-1);
         shippingAdress = new MutableLiveData<>();
-
         isUsingGridView = new MutableLiveData<>();
         isUsingGridView.setValue(true);
 

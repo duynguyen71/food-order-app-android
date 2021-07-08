@@ -66,8 +66,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="32dp"
                     app:icon="@drawable/ic_baseline_favorite_border_24"
+                    app:iconTint="@android:color/holo_orange_dark"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:strokeColor="@android:color/transparent" />
@@ -88,7 +89,8 @@
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?android:attr/listDivider" />
+                android:background="?android:attr/listDivider"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -99,7 +101,7 @@
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-condensed"
+                    android:fontFamily="sans-serif"
                     android:padding="10dp"
                     android:text="TextView"
                     android:textAllCaps="true"
@@ -118,7 +120,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TextView"
-                        android:textColor="@color/design_default_color_error"
+                        android:textColor="@android:color/holo_orange_dark"
                         android:textSize="20sp" />
 
                     <TextView
@@ -157,9 +159,7 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingLeft="10dp"
-                android:paddingTop="10dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="10dp">
+                android:paddingRight="10dp">
 
                 <TextView
                     android:id="@+id/textView15"
@@ -252,7 +252,7 @@
                     android:paddingTop="13dp"
                     android:paddingBottom="13dp"
                     android:text="Buy it now"
-                    app:backgroundTint="@color/black"
+                    app:backgroundTint="@color/colorPrimary"
                     app:cornerRadius="0dp"
                     app:icon="@drawable/ic_arrow_right_alt_24"
                     app:iconGravity="end" />

@@ -26,23 +26,21 @@ public class CommentItemAdapter extends RecyclerView.Adapter<CommentItemAdapter.
 
     private Context context;
     private List<Comment> comments;
-    private LayoutInflater inflater;
 
 
     @Setter
     private OnRemoveComment onRemoveComment;
 
-    public CommentItemAdapter(Context context, List<Comment> comments, LayoutInflater inflater) {
+    public CommentItemAdapter(Context context, List<Comment> comments) {
         this.context = context;
         this.comments = comments;
-        this.inflater = inflater;
     }
 
     @NonNull
     @NotNull
     @Override
     public CommentItemAdapter.MyViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.comment_entry, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.comment_entry, parent, false);
         return new MyViewHolder(view);
     }
 
@@ -56,10 +54,10 @@ public class CommentItemAdapter extends RecyclerView.Adapter<CommentItemAdapter.
 
     @Override
     public int getItemCount() {
-        if (this.comments != null) {
-            return this.comments.size();
+        if (this.comments == null || this.comments.isEmpty()) {
+            return 0;
         }
-        return 0;
+        return this.comments.size();
     }
 
     public Comment getComment(int pos) {
