@@ -4,7 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.account.AccountOrdersFragment">
+    tools:context=".ui.account.AccountFragment">
+
+    <TextView
+        android:id="@+id/khongTimThayOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Khong tim thay order nao"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/rcvAccountOrders"
+        app:layout_constraintStart_toStartOf="@+id/rcvAccountOrders"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvAccountOrders"

@@ -113,12 +113,11 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void handleOrderProcess() {
         MutableLiveData<ShippingAddress> shippingDetail = viewModel.getShippingAdress();
         ShippingAddress shippingDetailValue = shippingDetail.getValue();
-        if(shippingDetailValue==null||shippingDetailValue.getAddress()==null||shippingDetailValue.getPhone()==null||shippingDetailValue.getUsername()==null){
-            ApplicationUiUtils.showCustomToast(getContext(),Toast.LENGTH_LONG,"Please provide all info about shipping detail",getLayoutInflater());
+        if (shippingDetailValue == null || shippingDetailValue.getAddress() == null || shippingDetailValue.getPhone() == null || shippingDetailValue.getUsername() == null) {
+            ApplicationUiUtils.showCustomToast(getContext(), Toast.LENGTH_LONG, "Please provide all info about shipping detail", getLayoutInflater());
             return;
         }
         MutableLiveData<HashMap<Long, Object>> allItemInBag = viewModel.getBag();
@@ -133,10 +132,11 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
             order.setTotalStandardPrice(this.totalStandardPrice);
 
             List<CartItem> products = new ArrayList<>();
-            o.values().forEach(product -> {
-                CartItem pro = (CartItem) product;
-                products.add(pro);
-            });
+
+            for (Map.Entry<Long, Object> entry : o.entrySet()) {
+                CartItem value = (CartItem) entry.getValue();
+                products.add(value);
+            }
             order.setCartItems(products);
 
             order.setShippingAddress(shippingDetailValue);

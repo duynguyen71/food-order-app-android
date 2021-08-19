@@ -36,7 +36,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 break;
             }
             case 1: {
-                fragmentClass = AccountOrdersFragment.class;
+                fragmentClass = AccountFragment.class;
                 break;
             }
             case 2: {

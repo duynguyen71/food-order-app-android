@@ -7,8 +7,11 @@
         android:title="Bag" />
     <item
         android:id="@+id/nav_home"
+        android:icon="@drawable/ic_baseline_home_24"
         android:title="Home" />
     <item
+        android:id="@+id/nav_account"
         android:icon="@drawable/ic_account_circle_24"
         android:title="Account" />
+
 </menu>

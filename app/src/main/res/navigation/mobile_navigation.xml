@@ -18,12 +18,6 @@
             app:destination="@id/nav_bag" />
     </fragment>
 
-    <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.learn.kdnn.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
 
     <fragment
         android:id="@+id/nav_product_details"
@@ -36,6 +30,9 @@
         <action
             android:id="@+id/action_nav_product_details_to_bagFragment"
             app:destination="@id/nav_bag" />
+        <action
+            android:id="@+id/action_nav_product_details_to_nav_favorites"
+            app:destination="@id/nav_favorites" />
     </fragment>
     <fragment
         android:id="@+id/nav_favorites"
@@ -54,4 +51,9 @@
             android:id="@+id/action_nav_bag_to_nav_product_details"
             app:destination="@id/nav_product_details" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_account"
+        android:name="com.learn.kdnn.ui.account.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" />
 </navigation>

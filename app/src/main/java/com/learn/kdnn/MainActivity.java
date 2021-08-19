@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.item_my_order: {
-
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     Intent i = new Intent(this, AccountActivity.class);
                     i.putExtra(AccountActivity.ARG_VIEW_PAGER_POS, 1);
