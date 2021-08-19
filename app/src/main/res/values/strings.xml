@@ -20,5 +20,7 @@
 
     <string name="gg_client_id">247677956138-tinki2ksvdsduf1n5c4j8c6ificclj1n.apps.googleusercontent.com</string>
     <string name="gg_client_secret">IeIycS1GwGavqQN7VeBr9dHU</string>
+    <string name="password">password</string>
+    <string name="email">login@example.com</string>
 
 </resources>

@@ -55,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
-        NavController navController = setUpDrawerLayout();
+//        NavController navController = setUpDrawerLayout();
 
-        binding.appBarMain.shoppingCard.setOnClickListener(v -> navController.navigate(R.id.action_nav_home_to_nav_bag));
+//        binding.appBarMain.shoppingCard.setOnClickListener(v -> navController.navigate(R.id.action_nav_home_to_nav_bag));
 
         binding.appBarMain.accountCircle.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(this, binding.appBarMain.accountCircle);
@@ -71,33 +71,35 @@ public class MainActivity extends AppCompatActivity {
             popupMenu.setOnMenuItemClickListener(item -> handleAccountPopupItemMenuClick(item));
         });
 
+//        set up bottom nav
+        NavigationUI.setupWithNavController(binding.appBarMain.contentMainContainer.bottomNavView,getMainNavController());
     }
-
-    @NotNull
-    private NavController setUpDrawerLayout() {
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = findViewById(R.id.nav_view);
-
-
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_favorites)
-                .setDrawerLayout(drawer)
-                .build();
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (destination.getId() == R.id.nav_product_details || destination.getId() == R.id.nav_bag) {
-                getSupportActionBar().hide();
-            } else {
-                getSupportActionBar().show();
-            }
-        });
-        return navController;
-    }
+//
+//    @NotNull
+//    private NavController setUpDrawerLayout() {
+//        DrawerLayout drawer = binding.drawerLayout;
+//        NavigationView navigationView = findViewById(R.id.nav_view);
+//
+//
+//        mAppBarConfiguration = new AppBarConfiguration.Builder(
+//                R.id.nav_home, R.id.nav_gallery, R.id.nav_favorites)
+//                .setDrawerLayout(drawer)
+//                .build();
+//
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+//
+//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+//        NavigationUI.setupWithNavController(navigationView, navController);
+//
+//        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+//            if (destination.getId() == R.id.nav_product_details || destination.getId() == R.id.nav_bag) {
+//                getSupportActionBar().hide();
+//            } else {
+//                getSupportActionBar().show();
+//            }
+//        });
+//        return navController;
+//    }
 
     private boolean handleAccountPopupItemMenuClick(MenuItem item) {
         switch (item.getItemId()) {

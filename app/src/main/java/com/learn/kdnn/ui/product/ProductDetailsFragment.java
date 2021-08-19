@@ -37,7 +37,6 @@ import com.learn.kdnn.MainActivity;
 import com.learn.kdnn.MainViewModel;
 import com.learn.kdnn.R;
 import com.learn.kdnn.databinding.FragmentProductDetailsBinding;
-import com.learn.kdnn.databinding.RaitingsAndReviewsBinding;
 import com.learn.kdnn.model.CartItem;
 import com.learn.kdnn.model.Comment;
 import com.learn.kdnn.model.Product;
@@ -145,8 +144,6 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
         });
 
 
-
-
         commentsView = binding.ratingsReviewsContainer.commentsView;
         commentsView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         commentsView.setHasFixedSize(true);
@@ -207,12 +204,17 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                         if (snapshot.exists() && snapshot.getValue() != null) {
                             List<Comment> commentList = new ArrayList<>();
-                            snapshot
-                                    .getChildren()
-                                    .forEach(item -> {
-                                        Comment cmt = item.getValue(Comment.class);
-                                        commentList.add(cmt);
-                                    });
+//                            snapshot
+//                                    .getChildren()
+//                                    .forEach(item -> {
+//                                        Comment cmt = item.getValue(Comment.class);
+//                                        commentList.add(cmt);
+//                                    });
+                            for (DataSnapshot data :
+                                    snapshot.getChildren()) {
+                                commentList.add(data.getValue(Comment.class));
+                            }
+
                             commentItemAdapter = new CommentItemAdapter(getContext(), commentList);
                             commentsView.setAdapter(commentItemAdapter);
                         }

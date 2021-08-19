@@ -43,9 +43,10 @@ public class MainViewModel extends ViewModel {
                     .collection("users")
                     .document(FirebaseAuth.getInstance().getUid())
                     .addSnapshotListener((value, error) -> {
-                        Map<String, Object> data = value.getData();
+
                         User u;
-                        if (value.exists() && data != null) {
+                        if ( value !=null &&value.exists() && value.getData() != null) {
+                            Map<String, Object> data = value.getData();
                             u = new User();
                             u.setAddress((String) data.get("address"));
                             u.setPhoneNumber((String) data.get("phone"));

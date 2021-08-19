@@ -11,63 +11,61 @@
         android:layout_height="wrap_content"
         android:theme="@style/Theme.Kdnn.AppBarOverlay">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#070707"
+            app:popupTheme="@style/Theme.Kdnn.PopupOverlay">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="#070707"
-                app:popupTheme="@style/Theme.Kdnn.PopupOverlay">
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:orientation="horizontal">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageButton
-                            android:id="@+id/shoppingCard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center|end"
-                            android:background="@null"
-                            android:padding="10dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_baseline_shopping_cart_24"
-                            app:tint="@color/white" />
-
-                        <TextView
-
-                            android:id="@+id/countBagItem"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="#FF6D00"
-                            android:padding="3dp"
-                            android:text="0"
-                            android:textColor="@color/white"
-                            android:textSize="12sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                     <ImageButton
-                        android:id="@+id/accountCircle"
+                        android:id="@+id/shoppingCard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center|end"
                         android:background="@null"
                         android:padding="10dp"
-                        app:tint="@color/white"
-                        app:srcCompat="@drawable/ic_account_circle_24" />
-                </LinearLayout>
-            </androidx.appcompat.widget.Toolbar>
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_baseline_shopping_cart_24"
+                        app:tint="@color/white" />
 
+                    <TextView
 
+                        android:id="@+id/countBagItem"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#FF6D00"
+                        android:padding="3dp"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ImageButton
+                    android:id="@+id/accountCircle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:padding="10dp"
+                    app:srcCompat="@drawable/ic_account_circle_24"
+                    app:tint="@color/white" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
 
 
     </com.google.android.material.appbar.AppBarLayout>

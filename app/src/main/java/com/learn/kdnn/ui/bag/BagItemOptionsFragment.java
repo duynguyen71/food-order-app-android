@@ -34,7 +34,7 @@ public class BagItemOptionsFragment extends BottomSheetDialogFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.productId = getArguments().getInt(PRODUCT_ID);
+            this.productId = getArguments().getLong(PRODUCT_ID);
         }
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
     }

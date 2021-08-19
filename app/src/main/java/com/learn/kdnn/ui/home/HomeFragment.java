@@ -83,10 +83,18 @@ public class HomeFragment extends Fragment {
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             List<Product> productList = new ArrayList<>();
-                            snapshot.getChildren().forEach(child -> {
-                                Product prod = child.getValue(Product.class);
-                                productList.add(prod);
-                            });
+//                            snapshot.getChildren().forEach(child -> {
+//                                Product prod = child.getValue(Product.class);
+//                                productList.add(prod);
+//                            }
+                            //                            );
+
+                            for (DataSnapshot data :
+                                    snapshot.getChildren()) {
+                                productList.add(data.getValue(Product.class));
+                            }
+
+
                             binding.tv19.setText(productList.size() + " Products");
                             mainViewModel.setProducts(productList);
                             setUpRecyclerView(productList);
