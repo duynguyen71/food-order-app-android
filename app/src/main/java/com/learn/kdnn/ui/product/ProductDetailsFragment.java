@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ProductDetailsFragment extends Fragment implements View.OnClickListener, CommentItemAdapter.OnRemoveComment {
+public class ProductDetailsFragment extends Fragment implements View.OnClickListener {
 
     public static final String PRODUCT_ID = "id";
     private static final String TAG = ProductDetailsFragment.class.getSimpleName();
@@ -211,6 +211,27 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
 
                             commentItemAdapter = new CommentItemAdapter(getContext(), commentList);
                             commentsView.setAdapter(commentItemAdapter);
+                            commentItemAdapter.setOnRemoveComment(new CommentItemAdapter.OnRemoveComment() {
+                                @Override
+                                public void removeComment(int position) {
+                                    Log.e(TAG, "removeComment: ");
+                                    String uid = FirebaseAuth.getInstance().getUid();
+                                    FirebaseDatabase
+                                            .getInstance()
+                                            .getReference("comments")
+                                            .child(String.valueOf(product.getId()))
+                                            .child(uid)
+                                            .setValue(null)
+                                            .addOnCompleteListener(task -> {
+                                                if (task.isSuccessful()) {
+                                                    commentItemAdapter.removeComment(position);
+                                                    Toast.makeText(getContext(), "Your comment was removed!", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Log.d(TAG, "removeComment: err " + task.getException());
+                                                }
+                                            });
+                                }
+                            });
                         }
                     }
 
@@ -259,28 +280,6 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
         }
 
         binding.qualityCounter.setText(String.valueOf(count));
-    }
-
-    @Override
-    public void removeComment(int position) {
-        String uid = FirebaseAuth.getInstance().getUid();
-
-        FirebaseDatabase
-                .getInstance()
-                .getReference("comments")
-                .child(String.valueOf(product.getId()))
-                .child(uid)
-                .setValue(null)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        commentItemAdapter.removeComment(position);
-                        Toast.makeText(getContext(), "Your comment was removed!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.d(TAG, "removeComment: err " + task.getException());
-                    }
-                });
-
-
     }
 
 

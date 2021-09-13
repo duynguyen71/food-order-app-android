@@ -81,6 +81,7 @@ public class CommentItemAdapter extends RecyclerView.Adapter<CommentItemAdapter.
             tvCmtContent = itemView.findViewById(R.id.cmtContent);
             tvOptions = itemView.findViewById(R.id.cmtOptions);
 
+
             tvOptions.setOnClickListener(v -> {
                 PopupMenu popupMenu = new PopupMenu(context, tvOptions, GravityCompat.START);
                 popupMenu.inflate(R.menu.cmt_menu);

@@ -48,27 +48,14 @@ public class MainActivity extends AppCompatActivity {
             popupMenu.inflate(R.menu.account_setting);
             popupMenu.show();
             boolean isLogged = FirebaseAuth.getInstance().getCurrentUser() == null;
-            if (!isLogged) {
+            if (isLogged) {
                 MenuItem logout = popupMenu.getMenu().getItem(2);
                 logout.setTitle("Login");
             }
             popupMenu.setOnMenuItemClickListener(item -> handleAccountPopupItemMenuClick(item));
         });
 
-        binding.appBarMain.dashboard.setOnClickListener(v -> {
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            if (auth != null) {
-                boolean isAdmin = viewModel.getUser().getValue().getRole().equals(ERole.ROLE_ADMIN.name());
-                if (isAdmin) {
-                    Intent intent = new Intent(this, HahaActivity.class);
-                    startActivity(intent);
-                }
-            } else {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
+
 //        set up bottom nav
         NavigationUI.setupWithNavController(binding.appBarMain.contentMainContainer.bottomNavView, getMainNavController());
     }
