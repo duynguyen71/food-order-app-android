@@ -69,7 +69,6 @@ public class ShippingDetailFragment extends BottomSheetDialogFragment implements
         FragmentManager manager = mainActivity.getSupportFragmentManager();
         switch (v.getId()) {
             case R.id.btnReturnCheckoutMethodd: {
-
                 new CheckoutMethodFragment().show(manager, "checkout method fragment");
                 this.dismiss();
                 break;

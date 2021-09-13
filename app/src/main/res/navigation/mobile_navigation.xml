@@ -55,5 +55,9 @@
         android:id="@+id/nav_account"
         android:name="com.learn.kdnn.ui.account.AccountFragment"
         android:label="fragment_account"
-        tools:layout="@layout/fragment_account" />
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/account_to_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 </navigation>

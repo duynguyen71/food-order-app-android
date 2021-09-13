@@ -24,6 +24,15 @@
                 android:gravity="end"
                 android:orientation="horizontal">
 
+                <ImageButton
+                    android:id="@+id/dashboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:padding="10dp"
+                    app:tint="@color/white"
+                    app:srcCompat="@drawable/ic_baseline_dashboard_24" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
@@ -62,8 +71,9 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:padding="10dp"
+                    app:tint="@color/white"
                     app:srcCompat="@drawable/ic_account_circle_24"
-                    app:tint="@color/white" />
+                     />
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
 

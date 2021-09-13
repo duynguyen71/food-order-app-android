@@ -54,15 +54,11 @@ public class BagFragment extends Fragment implements BagItemViewAdapter.OnOption
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         viewModel.getBag().observe(requireActivity(), bagMap -> {
-
             if (bagMap != null) {
-
                 mainActivity.updateBagCounter();
-
                 binding.productInBag.setText(String.valueOf(bagMap.size()));
                 this.totalSalesPrice = AppUtils.getTotalSalesPrice(bagMap);
                 binding.bagTotal.setText("$" + String.format("%.2f", totalSalesPrice));
-
                 boolean isDiscount = false;
                 List<CartItem> cart = new ArrayList<>();
                 Set<Long> keys = bagMap.keySet();

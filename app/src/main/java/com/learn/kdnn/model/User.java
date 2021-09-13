@@ -24,6 +24,7 @@ public class User {
     private String avatarUrl;
     private Date dateCreated;
     private String address;
+    private String role;
     private List<String> addresses;
 
 }

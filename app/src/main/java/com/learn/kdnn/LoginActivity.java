@@ -8,6 +8,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //check user login or not
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             this.startMainActivity();
@@ -69,10 +69,6 @@ public class LoginActivity extends AppCompatActivity {
         binding.btnDoSignIn.setOnClickListener(v -> {
             TextInputEditText etEmail = binding.signInEmail;
             TextInputEditText etPassword = binding.signInPassword;
-            //test
-//            etEmail.setText(R.string.email);
-//            etPassword.setText(R.string.password);
-            //
             hideSoftInputMethod();
             binding.loginLoader.setVisibility(View.VISIBLE);
             etEmail.setError(null);
@@ -92,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(pass)) {
                 etPassword.setError("Your password is blank!");
                 binding.loginLoader.setVisibility(View.GONE);
-
                 return;
             }
 

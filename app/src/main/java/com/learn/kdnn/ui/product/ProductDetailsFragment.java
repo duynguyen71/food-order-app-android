@@ -204,12 +204,6 @@ public class ProductDetailsFragment extends Fragment implements View.OnClickList
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                         if (snapshot.exists() && snapshot.getValue() != null) {
                             List<Comment> commentList = new ArrayList<>();
-//                            snapshot
-//                                    .getChildren()
-//                                    .forEach(item -> {
-//                                        Comment cmt = item.getValue(Comment.class);
-//                                        commentList.add(cmt);
-//                                    });
                             for (DataSnapshot data :
                                     snapshot.getChildren()) {
                                 commentList.add(data.getValue(Comment.class));

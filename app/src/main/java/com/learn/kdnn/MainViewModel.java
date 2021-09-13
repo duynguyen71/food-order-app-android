@@ -36,20 +36,18 @@ public class MainViewModel extends ViewModel {
         bag = new MutableLiveData<>();
         bag.setValue(new HashMap<>());
         user = new MutableLiveData<>();
-
-
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(FirebaseAuth.getInstance().getUid())
                     .addSnapshotListener((value, error) -> {
-
                         User u;
                         if ( value !=null &&value.exists() && value.getData() != null) {
                             Map<String, Object> data = value.getData();
                             u = new User();
                             u.setAddress((String) data.get("address"));
                             u.setPhoneNumber((String) data.get("phone"));
+                            u.setRole((String)data.get("role"));
                             user.setValue(u);
                         } else {
                             user.setValue(new User());

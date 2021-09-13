@@ -117,7 +117,8 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
         MutableLiveData<ShippingAddress> shippingDetail = viewModel.getShippingAdress();
         ShippingAddress shippingDetailValue = shippingDetail.getValue();
         if (shippingDetailValue == null || shippingDetailValue.getAddress() == null || shippingDetailValue.getPhone() == null || shippingDetailValue.getUsername() == null) {
-            ApplicationUiUtils.showCustomToast(getContext(), Toast.LENGTH_LONG, "Please provide all info about shipping detail", getLayoutInflater());
+//            ApplicationUiUtils.showCustomToast(getContext(), Toast.LENGTH_LONG, "Please provide all info about shipping detail", getLayoutInflater());
+            ApplicationUiUtils.showCustomToast(getContext(), Toast.LENGTH_LONG, "Please select shipping method to place order", getLayoutInflater());
             return;
         }
         MutableLiveData<HashMap<Long, Object>> allItemInBag = viewModel.getBag();
@@ -150,7 +151,7 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
                     .setValue(order)
                     .addOnSuccessListener(success -> {
                         allItemInBag.setValue(new HashMap<>());
-                        Toast.makeText(getContext(), "Order Successful", Toast.LENGTH_SHORT).show();
+                        ApplicationUiUtils.showCustomToast(getContext(), Toast.LENGTH_SHORT, "Order Successful", getLayoutInflater());
                         this.dismiss();
                         mainActivity.getMainNavController()
                                 .navigate(R.id.action_nav_bag_to_nav_home);

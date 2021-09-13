@@ -12,7 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.learn.kdnn.databinding.ActivityRegisterBinding;
+import com.learn.kdnn.model.ERole;
+import com.learn.kdnn.model.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -28,8 +31,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         TextInputEditText etEmail = binding.signUpEmail;
         TextInputEditText etPassword = binding.signUpPassword;
-        binding.closeRegister.setOnClickListener(v->{
-            Intent intent = new Intent(this,LoginActivity.class);
+        binding.closeRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         });
@@ -45,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
                 binding.registerLoader.setVisibility(View.GONE);
                 return;
             }
-            if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 etEmail.setError("Your email is not valid!");
                 binding.registerLoader.setVisibility(View.GONE);
                 return;
@@ -63,6 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
                     .addOnSuccessListener(authResult -> {
                         Intent intent = new Intent(this, MainActivity.class);
                         startActivity(intent);
+                        saveUserInfo();
                         this.finish();
                     })
                     .addOnFailureListener(e -> {
@@ -75,12 +79,23 @@ public class RegisterActivity extends AppCompatActivity {
 
         });
     }
+
+    private void saveUserInfo() {
+        User user = new User();
+        user.setRole(ERole.ROLE_MEMBER.name());
+        FirebaseFirestore
+                .getInstance()
+                .collection("users")
+                .document(FirebaseAuth.getInstance().getUid())
+                .set(user);
+    }
+
     private void hideKeyBoard() {
         InputMethodManager manager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
         View focus = getCurrentFocus();
-        if(focus==null){
+        if (focus == null) {
             return;
         }
-        manager.hideSoftInputFromWindow(focus.getWindowToken(),0);
+        manager.hideSoftInputFromWindow(focus.getWindowToken(), 0);
     }
 }
