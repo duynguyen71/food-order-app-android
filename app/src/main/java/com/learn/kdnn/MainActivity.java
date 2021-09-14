@@ -42,16 +42,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.appBarMain.toolbar);
 
 
-//        TODO: fix
         binding.appBarMain.accountCircle.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(this, binding.appBarMain.accountCircle);
             popupMenu.inflate(R.menu.account_setting);
-            popupMenu.show();
             boolean isLogged = FirebaseAuth.getInstance().getCurrentUser() == null;
             if (isLogged) {
-                MenuItem logout = popupMenu.getMenu().getItem(2);
+                MenuItem logout = popupMenu.getMenu().getItem(1);
                 logout.setTitle("Login");
             }
+            popupMenu.show();
             popupMenu.setOnMenuItemClickListener(item -> handleAccountPopupItemMenuClick(item));
         });
 

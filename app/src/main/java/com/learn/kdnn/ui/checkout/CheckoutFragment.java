@@ -117,7 +117,6 @@ public class CheckoutFragment extends BottomSheetDialogFragment {
         MutableLiveData<ShippingAddress> shippingDetail = viewModel.getShippingAdress();
         ShippingAddress shippingDetailValue = shippingDetail.getValue();
         if (shippingDetailValue == null || shippingDetailValue.getAddress() == null || shippingDetailValue.getPhone() == null || shippingDetailValue.getUsername() == null) {
-//            ApplicationUiUtils.showCustomToast(getContext(), Toast.LENGTH_LONG, "Please provide all info about shipping detail", getLayoutInflater());
             ApplicationUiUtils.showCustomToast(getContext(), Toast.LENGTH_LONG, "Please select shipping method to place order", getLayoutInflater());
             return;
         }
